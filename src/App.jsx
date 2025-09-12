@@ -312,8 +312,8 @@ function App() {
           }`}>
             Latest <span className="bg-gradient-to-r from-red-500 to-red-400 bg-clip-text text-transparent">Upload</span>
           </h2>
-          <div className="flex justify-center gap-6 mb-16 overflow-x-auto">
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600 flex-shrink-0">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center mb-16">
+            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
               <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
                 <iframe
                   src="https://www.youtube.com/embed/6f9_Bu387bU"
@@ -333,7 +333,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600 flex-shrink-0">
+            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
               <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
                 <iframe
                   src="https://www.youtube.com/embed/3fLPpYpy5_c"
@@ -353,7 +353,7 @@ function App() {
                 </div>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600 flex-shrink-0">
+            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
               <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
                 <iframe
                   src="https://www.youtube.com/embed/TnFoKposGzI"
