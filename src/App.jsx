@@ -353,6 +353,26 @@ function App() {
                 </div>
               </div>
             </div>
+            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600 flex-shrink-0">
+              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
+                <iframe
+                  src="https://www.youtube.com/embed/TnFoKposGzI"
+                  title="Newest Upload"
+                  className="w-full h-full"
+                  frameBorder="0"
+                  allowFullScreen
+                />
+              </div>
+              <div className="p-4">
+                <h3 className="text-lg font-semibold mb-2 text-white">🆕 Newest Upload</h3>
+                <p className="text-gray-300 text-sm">Brand new short video with fresh content!</p>
+                <div className="mt-3">
+                  <span className="inline-block bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    LATEST
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
