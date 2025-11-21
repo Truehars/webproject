@@ -14,7 +14,9 @@ const YouTubeEmbed = ({ videoId, title }) => (
 
 const ShortsEmbed = ({ videoId, title }) => (
   <div className="flex flex-col items-center gap-4">
-    <div className="w-64 h-96 bg-black rounded-lg overflow-hidden shadow-lg">
+    <div className={`w-full max-w-lg bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-3xl border-4 ${
+      'border-green-500 hover:shadow-green-500/50'
+    }`} style={{aspectRatio: '16/9'}}>
       <iframe
         src={`https://www.youtube.com/embed/${videoId}`}
         title={title}
@@ -23,24 +25,24 @@ const ShortsEmbed = ({ videoId, title }) => (
         allowFullScreen
       />
     </div>
-    <p className="text-gray-600 text-sm font-medium">Latest Short Video</p>
+    <p className="text-gray-400 text-sm font-semibold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Latest Upload 🎬</p>
   </div>
 );
 
 function App() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <div className={`min-h-screen font-inter transition-colors duration-300 ${
       darkMode 
-        ? 'bg-gray-900 text-white' 
+        ? 'bg-gradient-to-br from-gray-900 via-green-900/20 to-gray-900 text-white' 
         : 'bg-gradient-to-br from-yellow-50 via-white to-amber-50 text-gray-900'
     }`}>
       {/* Navigation */}
       <nav className={`fixed top-0 w-full backdrop-blur-md border-b z-50 shadow-lg transition-colors duration-300 ${
         darkMode 
-          ? 'bg-gray-900/95 border-gray-700' 
+          ? 'bg-gray-900/95 border-green-500/50 shadow-green-500/20' 
           : 'bg-white/90 border-yellow-200'
       }`}>
         <div className="max-w-6xl mx-auto px-4 flex justify-between items-center h-16">
@@ -48,14 +50,14 @@ function App() {
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-lg transition-colors duration-300 ${
               darkMode 
-                ? 'bg-gradient-to-r from-red-500 to-red-600' 
+                ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500' 
                 : 'bg-gradient-to-r from-yellow-400 to-amber-500'
             }`}>
               <i className="fas fa-video text-white text-lg"></i>
             </div>
             <span className={`text-xl font-bold bg-clip-text text-transparent transition-colors duration-300 ${
               darkMode 
-                ? 'bg-gradient-to-r from-red-500 to-red-400' 
+                ? 'bg-gradient-to-r from-green-400 via-blue-400 to-purple-400' 
                 : 'bg-gradient-to-r from-yellow-500 to-amber-600'
             }`}>
               VLG ARPIT
@@ -65,35 +67,35 @@ function App() {
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
             <a href="#home" className={`font-medium transition-colors duration-200 relative group ${
-              darkMode ? 'text-gray-300 hover:text-red-400' : 'text-gray-700 hover:text-yellow-600'
+              darkMode ? 'text-gray-300 hover:text-green-400' : 'text-gray-700 hover:text-yellow-600'
             }`}>
               Home
               <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-red-500' : 'bg-yellow-500'
+                darkMode ? 'bg-gradient-to-r from-green-400 to-blue-500' : 'bg-yellow-500'
               }`}></span>
             </a>
             <a href="#about" className={`font-medium transition-colors duration-200 relative group ${
-              darkMode ? 'text-gray-300 hover:text-red-400' : 'text-gray-700 hover:text-yellow-600'
+              darkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700 hover:text-yellow-600'
             }`}>
               About
               <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-red-500' : 'bg-yellow-500'
+                darkMode ? 'bg-gradient-to-r from-blue-400 to-purple-500' : 'bg-yellow-500'
               }`}></span>
             </a>
             <a href="#videos" className={`font-medium transition-colors duration-200 relative group ${
-              darkMode ? 'text-gray-300 hover:text-red-400' : 'text-gray-700 hover:text-yellow-600'
+              darkMode ? 'text-gray-300 hover:text-purple-400' : 'text-gray-700 hover:text-yellow-600'
             }`}>
               Videos
               <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-red-500' : 'bg-yellow-500'
+                darkMode ? 'bg-gradient-to-r from-purple-400 to-pink-500' : 'bg-yellow-500'
               }`}></span>
             </a>
             <a href="#contact" className={`font-medium transition-colors duration-200 relative group ${
-              darkMode ? 'text-gray-300 hover:text-red-400' : 'text-gray-700 hover:text-yellow-600'
+              darkMode ? 'text-gray-300 hover:text-pink-400' : 'text-gray-700 hover:text-yellow-600'
             }`}>
               Contact
               <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-red-500' : 'bg-yellow-500'
+                darkMode ? 'bg-gradient-to-r from-pink-400 to-green-500' : 'bg-yellow-500'
               }`}></span>
             </a>
             
@@ -102,7 +104,7 @@ function App() {
               onClick={() => setDarkMode(!darkMode)}
               className={`ml-4 p-2 rounded-lg border transition-all duration-200 group ${
                 darkMode 
-                  ? 'bg-gray-800 hover:bg-gray-700 border-gray-600 hover:border-red-500' 
+                  ? 'bg-gray-800 hover:bg-gray-700 border-green-500 hover:border-green-400' 
                   : 'bg-yellow-100 hover:bg-yellow-200 border-yellow-300 hover:border-yellow-500'
               }`}
             >
@@ -181,65 +183,70 @@ function App() {
       {/* Hero Section */}
       <section id="home" className={`pt-20 pb-16 transition-colors duration-300 ${
         darkMode 
-          ? 'bg-gradient-to-br from-gray-900 to-gray-800' 
+          ? 'bg-gradient-to-br from-gray-900 via-green-900/10 to-gray-800' 
           : 'bg-gradient-to-br from-yellow-50 via-amber-50 to-white'
       }`}>
         <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-center">
-            {/* Profile Image */}
-            <div className="flex justify-center">
-              <img
-                src="https://yt3.googleusercontent.com/2_8e2DBpQ9tqbpU9z4w8KegXoBQbsz-sUFoQ-M7f3qVRu2B-u_2YklQGEJRilmZGl_MW1yQ-=s160-c-k-c0x00ffffff-no-rj"
-                alt="Arpit Profile"
-                className={`w-48 h-48 rounded-full border-4 shadow-2xl transition-all duration-300 hover:scale-105 ${
-                  darkMode 
-                    ? 'border-red-500 hover:shadow-red-500/25' 
-                    : 'border-yellow-400 hover:shadow-yellow-400/30'
-                }`}
-              />
-            </div>
-
-            {/* Hero Text */}
-            <div className="text-center lg:text-left">
-              <div className={`inline-flex items-center gap-2 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 ${
-                darkMode ? 'bg-red-600' : 'bg-gradient-to-r from-yellow-400 to-amber-500'
-              }`}>
-                <i className="fab fa-youtube"></i>
-                YouTube
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
+            {/* Left Column: Profile Image and Text */}
+            <div className="space-y-6">
+              {/* Profile Image */}
+              <div className="flex justify-center lg:justify-start">
+                <img
+                  src="https://yt3.googleusercontent.com/2_8e2DBpQ9tqbpU9z4w8KegXoBQbsz-sUFoQ-M7f3qVRu2B-u_2YklQGEJRilmZGl_MW1yQ-=s160-c-k-c0x00ffffff-no-rj"
+                  alt="Arpit Profile"
+                  className={`w-48 h-48 rounded-full border-4 shadow-2xl transition-all duration-300 hover:scale-105 ${
+                    darkMode 
+                      ? 'border-green-500 hover:shadow-green-500/50 hover:shadow-2xl' 
+                      : 'border-yellow-400 hover:shadow-yellow-400/30'
+                  }`}
+                />
               </div>
-              <h1 className="text-4xl lg:text-5xl font-bold mb-4">
-                VLG <span className={darkMode ? 'text-red-500' : 'text-yellow-500'}>ARPIT</span>
-              </h1>
-              <div className="flex flex-col sm:flex-row gap-4 mb-6">
-                <span className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
+
+              {/* Hero Text */}
+              <div className="text-center lg:text-left">
+                <div className={`inline-flex items-center gap-2 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 ${
+                  darkMode ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-yellow-400 to-amber-500'
+                }`}>
                   <i className="fab fa-youtube"></i>
-                  <span className="font-bold">81K Subscribers</span>
-                </span>
-                <span className="text-gray-400 font-medium">@ARPITVLG-i7p</span>
+                  YouTube
+                </div>
+                <h1 className="text-4xl lg:text-5xl font-bold mb-4">
+                  VLG <span className={darkMode ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent' : 'text-yellow-500'}>ARPIT</span>
+                </h1>
+                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                  <span className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
+                    <i className="fab fa-youtube"></i>
+                    <span className="font-bold">81K Subscribers</span>
+                  </span>
+                  <span className="text-gray-400 font-medium">@ARPITVLG-i7p</span>
+                </div>
+                <p className={`text-lg mb-6 leading-relaxed transition-colors duration-300 ${
+                  darkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>
+                  Hi, I am Arpit! I create short video vlogs with funny content and entertainment. 
+                  Quick, engaging videos that will make you laugh and brighten your day. Join my 81K+ community! 😁
+                </p>
+                <a
+                  href="https://www.youtube.com/@ARPITVLG-i7p"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`inline-block text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                    darkMode 
+                      ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-green-500/50' 
+                      : 'bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 hover:shadow-yellow-400/30'
+                  }`}
+                >
+                  YT Link
+                </a>
               </div>
-              <p className={`text-lg mb-6 leading-relaxed transition-colors duration-300 ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
-                Hi, I am Arpit! I create short video vlogs with funny content and entertainment. 
-                Quick, engaging videos that will make you laugh and brighten your day. Join my 81K+ community! 😁
-              </p>
-              <a
-                href="https://www.youtube.com/@ARPITVLG-i7p"
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`inline-block text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                  darkMode 
-                    ? 'bg-red-600 hover:bg-red-700' 
-                    : 'bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 hover:shadow-yellow-400/30'
-                }`}
-              >
-                YT Link
-              </a>
             </div>
 
-            {/* YouTube Shorts Video */}
-            <div className="flex justify-center">
-              <ShortsEmbed videoId="6f9_Bu387bU" title="Latest Upload" />
+            {/* Right Column: YouTube Videos */}
+            <div className="space-y-4 flex flex-col items-end justify-start">
+              <ShortsEmbed videoId="W5KSC-5YPr0" title="Latest Upload" />
+              <ShortsEmbed videoId="8T3zoVPnNCg" title="Popular Video" />
+              <ShortsEmbed videoId="t78_PcfnarE" title="Extended Vlog" />
             </div>
           </div>
         </div>
@@ -247,7 +254,7 @@ function App() {
 
       {/* About Section */}
       <section id="about" className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-800' : 'bg-white'
+        darkMode ? 'bg-gradient-to-br from-gray-800 via-green-900/10 to-gray-800' : 'bg-white'
       }`}>
         <div className="max-w-6xl mx-auto px-4">
           <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
@@ -255,7 +262,7 @@ function App() {
           }`}>
             About <span className={`bg-clip-text text-transparent ${
               darkMode 
-                ? 'bg-gradient-to-r from-red-500 to-red-400' 
+                ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500' 
                 : 'bg-gradient-to-r from-yellow-500 to-amber-600'
             }`}>VLG ARPIT</span>
           </h2>
@@ -278,11 +285,11 @@ function App() {
             <div className="space-y-6">
               <div className={`p-6 rounded-xl shadow-lg text-center border transition-all duration-300 hover:scale-105 hover:shadow-xl ${
                 darkMode 
-                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600 hover:border-red-500/50' 
+                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-green-500 hover:border-green-400 hover:shadow-green-500/30' 
                   : 'bg-gradient-to-br from-yellow-50 to-white border-yellow-200 hover:border-yellow-400'
               }`}>
                 <h3 className={`text-3xl font-bold mb-2 ${
-                  darkMode ? 'text-red-500' : 'text-yellow-600'
+                  darkMode ? 'text-green-400' : 'text-yellow-600'
                 }`}>81K</h3>
                 <p className={`font-medium transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -290,11 +297,11 @@ function App() {
               </div>
               <div className={`p-6 rounded-xl shadow-lg text-center border transition-all duration-300 hover:scale-105 hover:shadow-xl ${
                 darkMode 
-                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600 hover:border-red-500/50' 
+                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-blue-500 hover:border-blue-400 hover:shadow-blue-500/30' 
                   : 'bg-gradient-to-br from-yellow-50 to-white border-yellow-200 hover:border-yellow-400'
               }`}>
                 <h3 className={`text-3xl font-bold mb-2 ${
-                  darkMode ? 'text-red-500' : 'text-yellow-600'
+                  darkMode ? 'text-blue-400' : 'text-yellow-600'
                 }`}>15M+</h3>
                 <p className={`font-medium transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -302,11 +309,11 @@ function App() {
               </div>
               <div className={`p-6 rounded-xl shadow-lg text-center border transition-all duration-300 hover:scale-105 hover:shadow-xl ${
                 darkMode 
-                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600 hover:border-red-500/50' 
+                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-purple-500 hover:border-purple-400 hover:shadow-purple-500/30' 
                   : 'bg-gradient-to-br from-yellow-50 to-white border-yellow-200 hover:border-yellow-400'
               }`}>
                 <h3 className={`text-3xl font-bold mb-2 ${
-                  darkMode ? 'text-red-500' : 'text-yellow-600'
+                  darkMode ? 'text-purple-400' : 'text-yellow-600'
                 }`}>150+</h3>
                 <p className={`font-medium transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -319,7 +326,7 @@ function App() {
 
       {/* Experience Section */}
       <section className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-white via-yellow-50 to-white'
+        darkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900' : 'bg-gradient-to-br from-white via-yellow-50 to-white'
       }`}>
         <div className="max-w-6xl mx-auto px-4">
           <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
@@ -327,28 +334,28 @@ function App() {
           }`}>
             My <span className={`bg-clip-text text-transparent ${
               darkMode 
-                ? 'bg-gradient-to-r from-red-500 to-red-400' 
+                ? 'bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500' 
                 : 'bg-gradient-to-r from-yellow-500 to-amber-600'
             }`}>Experience</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className={`p-8 rounded-xl shadow-xl border transition-all duration-300 hover:scale-105 hover:shadow-2xl group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-green-500 hover:border-green-400 hover:shadow-green-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/50'
             }`}>
               <div className="flex items-center gap-4 mb-6">
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg ${
-                  darkMode ? 'bg-red-600' : 'bg-gradient-to-r from-yellow-400 to-amber-500'
+                  darkMode ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-yellow-400 to-amber-500'
                 }`}>
                   <i className="fab fa-youtube text-white text-2xl"></i>
                 </div>
                 <div>
                   <h3 className={`text-2xl font-bold transition-colors duration-300 ${
-                    darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                    darkMode ? 'text-white group-hover:text-green-400' : 'text-gray-900 group-hover:text-yellow-600'
                   }`}>YouTube Creator</h3>
                   <p className={`font-semibold ${
-                    darkMode ? 'text-red-500' : 'text-yellow-600'
+                    darkMode ? 'text-green-400' : 'text-yellow-600'
                   }`}>3+ Years Experience</p>
                 </div>
               </div>
@@ -360,21 +367,21 @@ function App() {
             </div>
             <div className={`p-8 rounded-xl shadow-xl border transition-all duration-300 hover:scale-105 hover:shadow-2xl group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-purple-500 hover:border-purple-400 hover:shadow-purple-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/50'
             }`}>
               <div className="flex items-center gap-4 mb-6">
                 <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg ${
-                  darkMode ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gradient-to-r from-amber-400 to-yellow-500'
+                  darkMode ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600' : 'bg-gradient-to-r from-amber-400 to-yellow-500'
                 }`}>
                   <i className="fas fa-cut text-white text-2xl"></i>
                 </div>
                 <div>
                   <h3 className={`text-2xl font-bold transition-colors duration-300 ${
-                    darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                    darkMode ? 'text-white group-hover:text-purple-400' : 'text-gray-900 group-hover:text-yellow-600'
                   }`}>CapCut Editor</h3>
                   <p className={`font-semibold ${
-                    darkMode ? 'text-purple-500' : 'text-amber-600'
+                    darkMode ? 'text-purple-400' : 'text-amber-600'
                   }`}>3+ Years Experience</p>
                 </div>
               </div>
@@ -389,198 +396,126 @@ function App() {
       </section>
 
       {/* Latest Upload Section */}
-      <section className={`py-16 transition-colors duration-300 ${
+      <section className={`py-20 transition-colors duration-300 ${
         darkMode ? 'bg-gray-800' : 'bg-yellow-50'
       }`}>
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className={`text-5xl font-bold text-center mb-16 transition-colors duration-300 ${
             darkMode ? 'text-white' : 'text-gray-900'
           }`}>
             Latest <span className={`bg-clip-text text-transparent ${
               darkMode 
-                ? 'bg-gradient-to-r from-red-500 to-red-400' 
+                ? 'bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500' 
                 : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-            }`}>Shorts</span>
+            }`}>Short Videos</span>
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 justify-items-center mb-16">
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/HcYInG-I80U"
-                  title="Latest Short 1"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-green-500 hover:border-green-400 hover:shadow-green-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/HcYInG-I80U" title="Latest Short 1" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">🔥 New Short!</h3>
-                <p className="text-gray-300 text-sm">Fresh content just for you!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-red-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-green-400' : 'text-gray-900'}`}>🔥 New Short!</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Fresh content just for you!</p>
+                <span className="inline-block bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/1EC3na202f8"
-                  title="Latest Short 2"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-blue-500 hover:border-blue-400 hover:shadow-blue-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/1EC3na202f8" title="Latest Short 2" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">🎬 Latest Short</h3>
-                <p className="text-gray-300 text-sm">Amazing new content!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-blue-400' : 'text-gray-900'}`}>🎬 Latest Short</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Amazing new content!</p>
+                <span className="inline-block bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/naLKXuigZOQ"
-                  title="Latest Short 3"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-purple-500 hover:border-purple-400 hover:shadow-purple-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/naLKXuigZOQ" title="Latest Short 3" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">🆕 Recent Upload</h3>
-                <p className="text-gray-300 text-sm">Fresh short video!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-purple-400' : 'text-gray-900'}`}>🆕 Recent Upload</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Fresh short video!</p>
+                <span className="inline-block bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/uZviNoz1V0w"
-                  title="Latest Short 4"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-pink-500 hover:border-pink-400 hover:shadow-pink-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/uZviNoz1V0w" title="Latest Short 4" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">✨ New Content</h3>
-                <p className="text-gray-300 text-sm">Brand new short video!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-purple-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-pink-400' : 'text-gray-900'}`}>✨ New Content</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Brand new short video!</p>
+                <span className="inline-block bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/xPjd7RUW4BQ"
-                  title="Latest Short 5"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-cyan-500 hover:border-cyan-400 hover:shadow-cyan-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/xPjd7RUW4BQ" title="Latest Short 5" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">🎥 Latest Upload</h3>
-                <p className="text-gray-300 text-sm">Newest short content!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-pink-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-cyan-400' : 'text-gray-900'}`}>🎥 Latest Upload</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Newest short content!</p>
+                <span className="inline-block bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/GmbW5t-QJVQ"
-                  title="Latest Short 6"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-indigo-500 hover:border-indigo-400 hover:shadow-indigo-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/GmbW5t-QJVQ" title="Latest Short 6" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">🌟 Fresh Short</h3>
-                <p className="text-gray-300 text-sm">New engaging content!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-indigo-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-indigo-400' : 'text-gray-900'}`}>🌟 Fresh Short</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>New engaging content!</p>
+                <span className="inline-block bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/FBsBEdBAgBo"
-                  title="Latest Short 7"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-teal-500 hover:border-teal-400 hover:shadow-teal-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/FBsBEdBAgBo" title="Latest Short 7" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">💫 Recent Video</h3>
-                <p className="text-gray-300 text-sm">Latest short upload!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-teal-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-teal-400' : 'text-gray-900'}`}>💫 Recent Video</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Latest short upload!</p>
+                <span className="inline-block bg-gradient-to-r from-teal-500 to-teal-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/2llPYIEhFbQ"
-                  title="Latest Short 8"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-orange-500 hover:border-orange-400 hover:shadow-orange-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/2llPYIEhFbQ" title="Latest Short 8" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">🎯 New Video</h3>
-                <p className="text-gray-300 text-sm">Fresh short content!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-orange-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-orange-400' : 'text-gray-900'}`}>🎯 New Video</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Fresh short content!</p>
+                <span className="inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
-            <div className="bg-gray-700 rounded-lg shadow-lg overflow-hidden border border-gray-600">
-              <div className="w-64 h-96 bg-black rounded-t-lg overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/s8UDJYJhtUs"
-                  title="Latest Short 9"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
+              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-rose-500 hover:border-rose-400 hover:shadow-rose-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
+            }`}>
+              <div className="w-72 h-[450px] bg-black overflow-hidden">
+                <iframe src="https://www.youtube.com/embed/s8UDJYJhtUs" title="Latest Short 9" className="w-full h-full" frameBorder="0" allowFullScreen />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold mb-2 text-white">⚡ Latest Short</h3>
-                <p className="text-gray-300 text-sm">Newest upload here!</p>
-                <div className="mt-3">
-                  <span className="inline-block bg-cyan-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-                    NEW
-                  </span>
-                </div>
+              <div className="p-5">
+                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-rose-400' : 'text-gray-900'}`}>⚡ Latest Short</h3>
+                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Newest upload here!</p>
+                <span className="inline-block bg-gradient-to-r from-rose-500 to-rose-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
               </div>
             </div>
           </div>
@@ -588,26 +523,26 @@ function App() {
       </section>
 
       {/* Featured Videos Section */}
-      <section id="videos" className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-900' : 'bg-white'
+      <section id="videos" className={`py-20 transition-colors duration-300 ${
+        darkMode ? 'bg-gradient-to-br from-gray-900 via-green-900/10 to-gray-900' : 'bg-white'
       }`}>
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className={`text-5xl font-bold text-center mb-16 transition-colors duration-300 ${
             darkMode ? 'text-white' : 'text-gray-900'
           }`}>
             Popular <span className={`bg-clip-text text-transparent ${
               darkMode 
-                ? 'bg-gradient-to-r from-red-500 to-red-400' 
+                ? 'bg-gradient-to-r from-green-400 via-cyan-500 to-blue-500' 
                 : 'bg-gradient-to-r from-yellow-500 to-amber-600'
             }`}>Short Vlogs</span>
           </h2>
-          <div className="flex flex-wrap justify-center gap-8 mb-12">
-            <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
+            <div className={`w-72 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-green-500 hover:border-green-400 hover:shadow-green-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
             }`}>
-              <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
+              <div className="w-full h-[450px] bg-black overflow-hidden">
                 <iframe
                   src="https://www.youtube.com/embed/sIcWAn3LWks"
                   title="Viral Hit - 10M Views"
@@ -618,7 +553,7 @@ function App() {
               </div>
               <div className="p-4">
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                  darkMode ? 'text-white group-hover:text-green-400' : 'text-gray-900 group-hover:text-yellow-600'
                 }`}>Viral Hit - 10M Views! 🔥</h3>
                 <p className={`text-sm transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -627,7 +562,7 @@ function App() {
             </div>
             <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-blue-500 hover:border-blue-400 hover:shadow-blue-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
             }`}>
               <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
@@ -641,7 +576,7 @@ function App() {
               </div>
               <div className="p-4">
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                  darkMode ? 'text-white group-hover:text-blue-400' : 'text-gray-900 group-hover:text-yellow-600'
                 }`}>Comedy Gold - Second Hit</h3>
                 <p className={`text-sm transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -650,7 +585,7 @@ function App() {
             </div>
             <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-purple-500 hover:border-purple-400 hover:shadow-purple-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
             }`}>
               <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
@@ -664,7 +599,7 @@ function App() {
               </div>
               <div className="p-4">
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                  darkMode ? 'text-white group-hover:text-purple-400' : 'text-gray-900 group-hover:text-yellow-600'
                 }`}>Trending Mini Vlog</h3>
                 <p className={`text-sm transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -673,7 +608,7 @@ function App() {
             </div>
             <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-pink-500 hover:border-pink-400 hover:shadow-pink-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
             }`}>
               <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
@@ -687,7 +622,7 @@ function App() {
               </div>
               <div className="p-4">
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                  darkMode ? 'text-white group-hover:text-pink-400' : 'text-gray-900 group-hover:text-yellow-600'
                 }`}>Latest Short Video</h3>
                 <p className={`text-sm transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -700,16 +635,16 @@ function App() {
       </section>
 
       {/* Krishna Videos Section */}
-      <section className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-900' : 'bg-gradient-to-br from-white via-amber-50 to-white'
+      <section className={`py-20 transition-colors duration-300 ${
+        darkMode ? 'bg-gradient-to-br from-gray-900 via-orange-900/10 to-gray-900' : 'bg-gradient-to-br from-white via-amber-50 to-white'
       }`}>
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className={`text-4xl font-bold text-center mb-4 transition-colors duration-300 ${
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className={`text-5xl font-bold text-center mb-6 transition-colors duration-300 ${
             darkMode ? 'text-white' : 'text-gray-900'
           }`}>
             Krishna Murti <span className={`bg-clip-text text-transparent ${
               darkMode 
-                ? 'bg-gradient-to-r from-orange-500 to-yellow-400' 
+                ? 'bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-400' 
                 : 'bg-gradient-to-r from-amber-500 to-yellow-600'
             }`}>Making Series</span>
           </h2>
@@ -717,13 +652,13 @@ function App() {
             darkMode ? 'text-gray-300' : 'text-gray-600'
           }`}>4-day journey of creating a beautiful Krishna Murti</p>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
-            <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
+            <div className={`w-72 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-orange-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-orange-500 hover:border-orange-400 hover:shadow-orange-500/30' 
                 : 'bg-white border-amber-200 hover:border-amber-400 hover:shadow-amber-200/30'
             }`}>
-              <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
+              <div className="w-full h-[450px] bg-black overflow-hidden">
                 <iframe
                   src="https://www.youtube.com/embed/1DQpgqYZDlo"
                   title="Krishna Murti Day 1"
@@ -818,23 +753,23 @@ function App() {
       </section>
 
       {/* Long Videos Section */}
-      <section className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-800' : 'bg-yellow-50'
+      <section className={`py-20 transition-colors duration-300 ${
+        darkMode ? 'bg-gradient-to-br from-gray-800 via-cyan-900/10 to-gray-800' : 'bg-yellow-50'
       }`}>
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
+        <div className="max-w-7xl mx-auto px-4">
+          <h2 className={`text-5xl font-bold text-center mb-16 transition-colors duration-300 ${
             darkMode ? 'text-white' : 'text-gray-900'
           }`}>
             Long <span className={`bg-clip-text text-transparent ${
               darkMode 
-                ? 'bg-gradient-to-r from-red-500 to-red-400' 
+                ? 'bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500' 
                 : 'bg-gradient-to-r from-yellow-500 to-amber-600'
             }`}>Videos</span>
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             <div className={`rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-cyan-500 hover:border-cyan-400 hover:shadow-cyan-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
             }`}>
               <div className="relative w-full bg-black rounded-t-xl overflow-hidden" style={{paddingBottom: '56.25%'}}>
@@ -848,7 +783,7 @@ function App() {
               </div>
               <div className="p-4">
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                  darkMode ? 'text-white group-hover:text-cyan-400' : 'text-gray-900 group-hover:text-yellow-600'
                 }`}>Featured Long Video</h3>
                 <p className={`text-sm transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -858,7 +793,7 @@ function App() {
             
             <div className={`rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-blue-500 hover:border-blue-400 hover:shadow-blue-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
             }`}>
               <div className="relative w-full bg-black rounded-t-xl overflow-hidden" style={{paddingBottom: '56.25%'}}>
@@ -872,7 +807,7 @@ function App() {
               </div>
               <div className="p-4">
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                  darkMode ? 'text-white group-hover:text-blue-400' : 'text-gray-900 group-hover:text-yellow-600'
                 }`}>Popular Long Form</h3>
                 <p className={`text-sm transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -882,7 +817,7 @@ function App() {
             
             <div className={`rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
               darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-red-500/50' 
+                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-indigo-500 hover:border-indigo-400 hover:shadow-indigo-500/30' 
                 : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
             }`}>
               <div className="relative w-full bg-black rounded-t-xl overflow-hidden" style={{paddingBottom: '56.25%'}}>
@@ -896,7 +831,7 @@ function App() {
               </div>
               <div className="p-4">
                 <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-red-400' : 'text-gray-900 group-hover:text-yellow-600'
+                  darkMode ? 'text-white group-hover:text-indigo-400' : 'text-gray-900 group-hover:text-yellow-600'
                 }`}>Extended Vlog</h3>
                 <p className={`text-sm transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
@@ -909,7 +844,7 @@ function App() {
 
       {/* Contact Section */}
       <section id="contact" className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-900' : 'bg-white'
+        darkMode ? 'bg-gradient-to-br from-gray-900 via-purple-900/10 to-gray-900' : 'bg-white'
       }`}>
         <div className="max-w-4xl mx-auto px-4">
           <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
@@ -917,7 +852,7 @@ function App() {
           }`}>
             Let's <span className={`bg-clip-text text-transparent ${
               darkMode 
-                ? 'bg-gradient-to-r from-red-500 to-red-400' 
+                ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500' 
                 : 'bg-gradient-to-r from-yellow-500 to-amber-600'
             }`}>Connect</span>
           </h2>
@@ -952,7 +887,7 @@ function App() {
                   rel="noopener noreferrer"
                   className={`inline-flex items-center gap-3 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
                     darkMode 
-                      ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 hover:shadow-red-500/25' 
+                      ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-green-500/50' 
                       : 'bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 hover:shadow-yellow-400/30'
                   }`}
                 >
@@ -1018,7 +953,7 @@ function App() {
                 type="submit"
                 className={`w-full text-white py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
                   darkMode 
-                    ? 'bg-gradient-to-r from-red-600 to-red-500 hover:from-red-700 hover:to-red-600 hover:shadow-red-500/25' 
+                    ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-green-500/50' 
                     : 'bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 hover:shadow-yellow-400/30'
                 }`}
               >
@@ -1031,7 +966,7 @@ function App() {
 
       {/* Footer */}
       <footer className={`py-8 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white'
+        darkMode ? 'bg-gradient-to-r from-green-600 via-emerald-600 to-green-600 text-white' : 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white'
       }`}>
         <div className="max-w-6xl mx-auto px-4 text-center">
           <p>&copy; 2024 VLG ARPIT. All rights reserved.</p>
