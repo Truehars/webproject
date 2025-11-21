@@ -1031,7 +1031,7 @@ function App() {
 
       {/* Footer */}
       <footer className={`py-8 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-900 text-white' : 'bg-gray-800 text-white'
+        darkMode ? 'bg-gray-900 text-white' : 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white'
       }`}>
         <div className="max-w-6xl mx-auto px-4 text-center">
           <p>&copy; 2024 VLG ARPIT. All rights reserved.</p>
