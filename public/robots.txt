@@ -1,0 +1,20 @@
+# robots.txt for VLG ARPIT Portfolio
+User-agent: *
+Allow: /
+Disallow: /node_modules/
+Disallow: /.git/
+
+# Sitemaps
+Sitemap: https://truehars.github.io/webproject/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Allow Google Image Bot
+User-agent: Googlebot-Image
+Allow: /
+
+# Allow all bots to access
+User-agent: *
+Allow: /src/
+Allow: /index.html

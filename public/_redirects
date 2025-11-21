@@ -1,0 +1,10 @@
+# Redirect www to non-www (optional - update with your domain)
+# https://www.yourdomain.com/* https://yourdomain.com/:splat 301!
+
+# SPA fallback
+/*    /index.html   200
+
+# Ensure SEO files are accessible
+/sitemap.xml    /sitemap.xml    200
+/robots.txt     /robots.txt     200
+/google*.html   /google*.html   200
