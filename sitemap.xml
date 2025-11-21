@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1"
+        xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">
+  
+  <!-- Homepage -->
+  <url>
+    <loc>https://truehars.github.io/webproject/</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://yt3.googleusercontent.com/2_8e2DBpQ9tqbpU9z4w8KegXoBQbsz-sUFoQ-M7f3qVRu2B-u_2YklQGEJRilmZGl_MW1yQ-=s160-c-k-c0x00ffffff-no-rj</image:loc>
+      <image:title>VLG ARPIT Profile Picture</image:title>
+      <image:caption>YouTube Content Creator with 83K Subscribers</image:caption>
+    </image:image>
+  </url>
+  
+  <!-- About Section -->
+  <url>
+    <loc>https://truehars.github.io/webproject/#about</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Short Videos Section -->
+  <url>
+    <loc>https://truehars.github.io/webproject/#shorts</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Long Videos Section -->
+  <url>
+    <loc>https://truehars.github.io/webproject/#longvideos</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>daily</changefreq>
+    <priority>0.9</priority>
+  </url>
+  
+  <!-- Videos Section -->
+  <url>
+    <loc>https://truehars.github.io/webproject/#videos</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  
+  <!-- Contact Section -->
+  <url>
+    <loc>https://truehars.github.io/webproject/#contact</loc>
+    <lastmod>2025-11-22</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+  </url>
+  
+</urlset>
