@@ -42,11 +42,12 @@ function App() {
         : 'bg-gradient-to-br from-yellow-50 via-white to-amber-50 text-gray-900'
     }`}>
       {/* Navigation */}
-      <nav className={`fixed top-0 w-full backdrop-blur-md border-b z-50 shadow-lg transition-colors duration-300 ${
+      <nav className={`fixed top-0 w-full backdrop-blur-md z-50 shadow-lg transition-colors duration-300 ${
         darkMode 
-          ? 'bg-gray-900/95 border-green-500/50 shadow-green-500/20' 
-          : 'bg-white/90 border-yellow-200'
+          ? 'bg-gray-900/95 border-b border-green-500/50 shadow-green-500/20' 
+          : 'bg-white/90 border-b border-yellow-200'
       }`}>
+        {/* Navigation Bar */}
         <div className="max-w-6xl mx-auto px-4 flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex items-center gap-3">
@@ -182,8 +183,41 @@ function App() {
         )}
       </nav>
 
+      {/* Banner Section */}
+      <section className={`pt-20 transition-colors duration-300 ${
+        darkMode ? 'bg-gray-900' : 'bg-white'
+      }`}>
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <div className={`rounded-2xl overflow-hidden border-4 shadow-2xl transition-all duration-300 hover:shadow-3xl ${
+            darkMode 
+              ? 'border-green-500 shadow-green-500/30 hover:border-green-400' 
+              : 'border-yellow-400 shadow-yellow-400/30 hover:border-yellow-500'
+          }`}>
+            <div className="relative h-40 md:h-56 overflow-hidden group">
+              <img
+                src="https://yt3.googleusercontent.com/Juq8ug22QpLlz2-FfYFzVuNsCueD0A_S91L0ASAAo-5zpzOt3f9AxxFiMMko12JTpCaMZ2Mk=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"
+                alt="Channel Banner"
+                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                loading="eager"
+              />
+              <div className={`absolute inset-0 transition-opacity duration-300 ${
+                darkMode 
+                  ? 'bg-gradient-to-br from-green-500/20 via-transparent to-blue-500/20 opacity-0 group-hover:opacity-100' 
+                  : 'bg-gradient-to-br from-yellow-400/20 via-transparent to-amber-400/20 opacity-0 group-hover:opacity-100'
+              }`}></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+              <div className="absolute bottom-4 left-4 right-4">
+                <h2 className="text-white text-xl md:text-3xl font-bold drop-shadow-lg">
+                  Welcome to VLG ARPIT Channel 🎬
+                </h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Hero Section */}
-      <section id="home" className={`pt-20 pb-16 transition-colors duration-300 ${
+      <section id="home" className={`pb-16 transition-colors duration-300 ${
         darkMode 
           ? 'bg-gradient-to-br from-gray-900 via-green-900/10 to-gray-800' 
           : 'bg-gradient-to-br from-yellow-50 via-amber-50 to-white'
