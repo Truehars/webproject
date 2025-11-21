@@ -13,16 +13,18 @@ const YouTubeEmbed = ({ videoId, title }) => (
 );
 
 const ShortsEmbed = ({ videoId, title }) => (
-  <div className="flex flex-col items-center gap-4">
-    <div className={`w-full max-w-lg bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-3xl border-4 ${
+  <div className="flex flex-col items-center gap-4 w-full">
+    <div className={`w-full max-w-lg bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300 active:scale-95 md:hover:scale-105 hover:shadow-3xl border-4 ${
       'border-green-500 hover:shadow-green-500/50'
-    }`} style={{aspectRatio: '16/9'}}>
+    }`} style={{aspectRatio: '16/9', maxHeight: '400px'}}>
       <iframe
         src={`https://www.youtube.com/embed/${videoId}`}
         title={title}
         className="w-full h-full"
         frameBorder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
         allowFullScreen
+        loading="lazy"
       />
     </div>
     <p className="text-gray-400 text-sm font-semibold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Latest Upload 🎬</p>
@@ -189,13 +191,14 @@ function App() {
         <div className="max-w-6xl mx-auto px-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
             {/* Left Column: Profile Image and Text */}
-            <div className="space-y-6">
+            <div className="space-y-6 order-1">
               {/* Profile Image */}
               <div className="flex justify-center lg:justify-start">
                 <img
                   src="https://yt3.googleusercontent.com/2_8e2DBpQ9tqbpU9z4w8KegXoBQbsz-sUFoQ-M7f3qVRu2B-u_2YklQGEJRilmZGl_MW1yQ-=s160-c-k-c0x00ffffff-no-rj"
                   alt="Arpit Profile"
-                  className={`w-48 h-48 rounded-full border-4 shadow-2xl transition-all duration-300 hover:scale-105 ${
+                  loading="lazy"
+                  className={`w-40 h-40 md:w-48 md:h-48 rounded-full border-4 shadow-2xl transition-all duration-300 active:scale-95 md:hover:scale-105 ${
                     darkMode 
                       ? 'border-green-500 hover:shadow-green-500/50 hover:shadow-2xl' 
                       : 'border-yellow-400 hover:shadow-yellow-400/30'
@@ -204,24 +207,24 @@ function App() {
               </div>
 
               {/* Hero Text */}
-              <div className="text-center lg:text-left">
+              <div className="text-center lg:text-left px-4 md:px-0">
                 <div className={`inline-flex items-center gap-2 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 ${
                   darkMode ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-yellow-400 to-amber-500'
                 }`}>
                   <i className="fab fa-youtube"></i>
                   YouTube
                 </div>
-                <h1 className="text-4xl lg:text-5xl font-bold mb-4">
+                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
                   VLG <span className={darkMode ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent' : 'text-yellow-500'}>ARPIT</span>
                 </h1>
-                <div className="flex flex-col sm:flex-row gap-4 mb-6">
+                <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center lg:justify-start">
                   <span className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
                     <i className="fab fa-youtube"></i>
                     <span className="font-bold">81K Subscribers</span>
                   </span>
                   <span className="text-gray-400 font-medium">@ARPITVLG-i7p</span>
                 </div>
-                <p className={`text-lg mb-6 leading-relaxed transition-colors duration-300 ${
+                <p className={`text-base md:text-lg mb-6 leading-relaxed transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
                 }`}>
                   Hi, I am Arpit! I create short video vlogs with funny content and entertainment. 
@@ -231,7 +234,7 @@ function App() {
                   href="https://www.youtube.com/@ARPITVLG-i7p"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className={`inline-block text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
+                  className={`inline-block text-white px-6 md:px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform active:scale-95 md:hover:scale-105 shadow-lg ${
                     darkMode 
                       ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-green-500/50' 
                       : 'bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 hover:shadow-yellow-400/30'
@@ -243,10 +246,9 @@ function App() {
             </div>
 
             {/* Right Column: YouTube Videos */}
-            <div className="space-y-4 flex flex-col items-end justify-start">
+            <div className="space-y-4 flex flex-col items-center lg:items-end justify-start order-2">
               <ShortsEmbed videoId="W5KSC-5YPr0" title="Latest Upload" />
               <ShortsEmbed videoId="8T3zoVPnNCg" title="Popular Video" />
-              <ShortsEmbed videoId="t78_PcfnarE" title="Extended Vlog" />
             </div>
           </div>
         </div>
