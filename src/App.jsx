@@ -12,10 +12,10 @@ const YouTubeEmbed = ({ videoId, title }) => (
   </div>
 );
 
-const ShortsEmbed = ({ videoId, title }) => (
+const ShortsEmbed = ({ videoId, title, darkMode }) => (
   <div className="flex flex-col items-center gap-4 w-full">
     <div className={`w-full max-w-lg bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300 active:scale-95 md:hover:scale-105 hover:shadow-3xl border-4 ${
-      'border-green-500 hover:shadow-green-500/50'
+      darkMode ? 'border-green-500 hover:shadow-green-500/50' : 'border-yellow-400 hover:shadow-yellow-400/30'
     }`} style={{aspectRatio: '16/9', maxHeight: '400px'}}>
       <iframe
         src={`https://www.youtube.com/embed/${videoId}`}
@@ -27,7 +27,9 @@ const ShortsEmbed = ({ videoId, title }) => (
         loading="lazy"
       />
     </div>
-    <p className="text-gray-400 text-sm font-semibold bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Latest Upload 🎬</p>
+    <p className={`text-gray-400 text-sm font-semibold bg-clip-text text-transparent ${
+      darkMode ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-yellow-500 to-amber-600'
+    }`}>Latest Upload 🎬</p>
   </div>
 );
 
@@ -68,53 +70,66 @@ function App() {
           </div>
           
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#home" className={`font-medium transition-colors duration-200 relative group ${
+          <div className="hidden md:flex items-center gap-6">
+            <a href="#home" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
               darkMode ? 'text-gray-300 hover:text-green-400' : 'text-gray-700 hover:text-yellow-600'
             }`}>
+              <i className="fas fa-home text-sm"></i>
               Home
               <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
                 darkMode ? 'bg-gradient-to-r from-green-400 to-blue-500' : 'bg-yellow-500'
               }`}></span>
             </a>
-            <a href="#about" className={`font-medium transition-colors duration-200 relative group ${
+            <a href="#about" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
               darkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700 hover:text-yellow-600'
             }`}>
+              <i className="fas fa-user text-sm"></i>
               About
               <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
                 darkMode ? 'bg-gradient-to-r from-blue-400 to-purple-500' : 'bg-yellow-500'
               }`}></span>
             </a>
-            <a href="#videos" className={`font-medium transition-colors duration-200 relative group ${
-              darkMode ? 'text-gray-300 hover:text-purple-400' : 'text-gray-700 hover:text-yellow-600'
-            }`}>
-              Videos
-              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-gradient-to-r from-purple-400 to-pink-500' : 'bg-yellow-500'
-              }`}></span>
-            </a>
-            <a href="#contact" className={`font-medium transition-colors duration-200 relative group ${
+            <a href="#shorts" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
               darkMode ? 'text-gray-300 hover:text-pink-400' : 'text-gray-700 hover:text-yellow-600'
             }`}>
+              <i className="fas fa-film text-sm"></i>
+              Short Videos
+              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
+                darkMode ? 'bg-gradient-to-r from-pink-400 to-rose-500' : 'bg-yellow-500'
+              }`}></span>
+            </a>
+            <a href="#longvideos" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
+              darkMode ? 'text-gray-300 hover:text-cyan-400' : 'text-gray-700 hover:text-yellow-600'
+            }`}>
+              <i className="fas fa-video text-sm"></i>
+              Long Videos
+              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
+                darkMode ? 'bg-gradient-to-r from-cyan-400 to-blue-500' : 'bg-yellow-500'
+              }`}></span>
+            </a>
+            <a href="#contact" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
+              darkMode ? 'text-gray-300 hover:text-purple-400' : 'text-gray-700 hover:text-yellow-600'
+            }`}>
+              <i className="fas fa-envelope text-sm"></i>
               Contact
               <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-gradient-to-r from-pink-400 to-green-500' : 'bg-yellow-500'
+                darkMode ? 'bg-gradient-to-r from-purple-400 to-green-500' : 'bg-yellow-500'
               }`}></span>
             </a>
             
             {/* Theme Toggle */}
             <button 
               onClick={() => setDarkMode(!darkMode)}
-              className={`ml-4 p-2 rounded-lg border transition-all duration-200 group ${
+              className={`ml-2 p-2.5 rounded-lg border-2 transition-all duration-200 group hover:scale-110 ${
                 darkMode 
-                  ? 'bg-gray-800 hover:bg-gray-700 border-green-500 hover:border-green-400' 
-                  : 'bg-yellow-100 hover:bg-yellow-200 border-yellow-300 hover:border-yellow-500'
+                  ? 'bg-gray-800 hover:bg-gray-700 border-green-500 hover:border-green-400 hover:shadow-lg hover:shadow-green-500/30' 
+                  : 'bg-yellow-100 hover:bg-yellow-200 border-yellow-400 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-400/30'
               }`}
             >
               {darkMode ? (
-                <i className="fas fa-sun text-yellow-400 group-hover:text-yellow-300"></i>
+                <i className="fas fa-sun text-yellow-400 group-hover:text-yellow-300 transition-colors duration-200"></i>
               ) : (
-                <i className="fas fa-moon text-gray-600 group-hover:text-gray-800"></i>
+                <i className="fas fa-moon text-gray-600 group-hover:text-gray-800 transition-colors duration-200"></i>
               )}
             </button>
           </div>
@@ -158,24 +173,34 @@ function App() {
               : 'bg-white/95 border-yellow-200'
           }`}>
             <div className="px-4 py-4 space-y-3">
-              <a href="#home" className={`block font-medium py-2 transition-colors duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-red-400' : 'text-gray-700 hover:text-yellow-600'
+              <a href="#home" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
+                darkMode ? 'text-gray-300 hover:text-green-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
               }`}>
+                <i className="fas fa-home w-5"></i>
                 Home
               </a>
-              <a href="#about" className={`block font-medium py-2 transition-colors duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-red-400' : 'text-gray-700 hover:text-yellow-600'
+              <a href="#about" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
+                darkMode ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
               }`}>
+                <i className="fas fa-user w-5"></i>
                 About
               </a>
-              <a href="#videos" className={`block font-medium py-2 transition-colors duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-red-400' : 'text-gray-700 hover:text-yellow-600'
+              <a href="#shorts" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
+                darkMode ? 'text-gray-300 hover:text-pink-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
               }`}>
-                Videos
+                <i className="fas fa-film w-5"></i>
+                Short Videos
               </a>
-              <a href="#contact" className={`block font-medium py-2 transition-colors duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-red-400' : 'text-gray-700 hover:text-yellow-600'
+              <a href="#longvideos" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
+                darkMode ? 'text-gray-300 hover:text-cyan-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
               }`}>
+                <i className="fas fa-video w-5"></i>
+                Long Videos
+              </a>
+              <a href="#contact" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
+                darkMode ? 'text-gray-300 hover:text-purple-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
+              }`}>
+                <i className="fas fa-envelope w-5"></i>
                 Contact
               </a>
             </div>
@@ -252,9 +277,11 @@ function App() {
                   VLG <span className={darkMode ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent' : 'text-yellow-500'}>ARPIT</span>
                 </h1>
                 <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center lg:justify-start">
-                  <span className="inline-flex items-center gap-2 bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-lg font-semibold shadow-lg">
+                  <span className={`inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg font-semibold shadow-lg ${
+                    darkMode ? 'bg-gradient-to-r from-green-600 to-green-500' : 'bg-gradient-to-r from-yellow-500 to-amber-600'
+                  }`}>
                     <i className="fab fa-youtube"></i>
-                    <span className="font-bold">81K Subscribers</span>
+                    <span className="font-bold">83K Subscribers</span>
                   </span>
                   <span className="text-gray-400 font-medium">@ARPITVLG-i7p</span>
                 </div>
@@ -262,7 +289,7 @@ function App() {
                   darkMode ? 'text-gray-300' : 'text-gray-600'
                 }`}>
                   Hi, I am Arpit! I create short video vlogs with funny content and entertainment. 
-                  Quick, engaging videos that will make you laugh and brighten your day. Join my 81K+ community! 😁
+                  Quick, engaging videos that will make you laugh and brighten your day. Join my 83K+ community! 😁
                 </p>
                 <a
                   href="https://www.youtube.com/@ARPITVLG-i7p"
@@ -281,8 +308,8 @@ function App() {
 
             {/* Right Column: YouTube Videos */}
             <div className="space-y-4 flex flex-col items-center lg:items-end justify-start order-2">
-              <ShortsEmbed videoId="W5KSC-5YPr0" title="Latest Upload" />
-              <ShortsEmbed videoId="8T3zoVPnNCg" title="Popular Video" />
+              <ShortsEmbed videoId="W5KSC-5YPr0" title="Latest Upload" darkMode={darkMode} />
+              <ShortsEmbed videoId="8T3zoVPnNCg" title="Popular Video" darkMode={darkMode} />
             </div>
           </div>
         </div>
@@ -326,7 +353,7 @@ function App() {
               }`}>
                 <h3 className={`text-3xl font-bold mb-2 ${
                   darkMode ? 'text-green-400' : 'text-yellow-600'
-                }`}>81K</h3>
+                }`}>83K</h3>
                 <p className={`font-medium transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
                 }`}>Current Subscribers</p>
@@ -432,7 +459,7 @@ function App() {
       </section>
 
       {/* Latest Upload Section */}
-      <section className={`py-20 transition-colors duration-300 ${
+      <section id="shorts" className={`py-20 transition-colors duration-300 ${
         darkMode ? 'bg-gray-800' : 'bg-yellow-50'
       }`}>
         <div className="max-w-7xl mx-auto px-4">
@@ -455,7 +482,9 @@ function App() {
               <div className="p-5">
                 <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-green-400' : 'text-gray-900'}`}>🔥 New Short!</h3>
                 <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Fresh content just for you!</p>
-                <span className="inline-block bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
+                <span className={`inline-block text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg ${
+                  darkMode ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-yellow-500 to-amber-600'
+                }`}>NEW</span>
               </div>
             </div>
             <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
@@ -789,7 +818,7 @@ function App() {
       </section>
 
       {/* Long Videos Section */}
-      <section className={`py-20 transition-colors duration-300 ${
+      <section id="longvideos" className={`py-20 transition-colors duration-300 ${
         darkMode ? 'bg-gradient-to-br from-gray-800 via-cyan-900/10 to-gray-800' : 'bg-yellow-50'
       }`}>
         <div className="max-w-7xl mx-auto px-4">
