@@ -14,9 +14,9 @@ const YouTubeEmbed = ({ videoId, title }) => (
 
 const ShortsEmbed = ({ videoId, title, darkMode }) => (
   <div className="flex flex-col items-center gap-4 w-full">
-    <div className={`w-full max-w-lg bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300 active:scale-95 md:hover:scale-105 hover:shadow-3xl border-4 ${
+    <div className={`w-64 h-[450px] bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300 active:scale-95 md:hover:scale-105 hover:shadow-3xl border-4 ${
       darkMode ? 'border-green-500 hover:shadow-green-500/50' : 'border-yellow-400 hover:shadow-yellow-400/30'
-    }`} style={{aspectRatio: '16/9', maxHeight: '400px'}}>
+    }`}>
       <iframe
         src={`https://www.youtube.com/embed/${videoId}`}
         title={title}
