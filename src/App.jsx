@@ -98,15 +98,6 @@ function App() {
                 darkMode ? 'bg-gradient-to-r from-pink-400 to-rose-500' : 'bg-yellow-500'
               }`}></span>
             </a>
-            <a href="#longvideos" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
-              darkMode ? 'text-gray-300 hover:text-cyan-400' : 'text-gray-700 hover:text-yellow-600'
-            }`}>
-              <i className="fas fa-video text-sm"></i>
-              Long Videos
-              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-gradient-to-r from-cyan-400 to-blue-500' : 'bg-yellow-500'
-              }`}></span>
-            </a>
             <a href="#contact" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
               darkMode ? 'text-gray-300 hover:text-purple-400' : 'text-gray-700 hover:text-yellow-600'
             }`}>
@@ -190,12 +181,6 @@ function App() {
               }`}>
                 <i className="fas fa-film w-5"></i>
                 Short Videos
-              </a>
-              <a href="#longvideos" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-cyan-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
-              }`}>
-                <i className="fas fa-video w-5"></i>
-                Long Videos
               </a>
               <a href="#contact" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
                 darkMode ? 'text-gray-300 hover:text-purple-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
@@ -811,96 +796,6 @@ function App() {
                 <p className={`text-sm transition-colors duration-300 ${
                   darkMode ? 'text-gray-300' : 'text-gray-600'
                 }`}>Final touches and completed Krishna Murti.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Long Videos Section */}
-      <section id="longvideos" className={`py-20 transition-colors duration-300 ${
-        darkMode ? 'bg-gradient-to-br from-gray-800 via-cyan-900/10 to-gray-800' : 'bg-yellow-50'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className={`text-5xl font-bold text-center mb-16 transition-colors duration-300 ${
-            darkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            Long <span className={`bg-clip-text text-transparent ${
-              darkMode 
-                ? 'bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500' 
-                : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-            }`}>Videos</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <div className={`rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-cyan-500 hover:border-cyan-400 hover:shadow-cyan-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
-            }`}>
-              <div className="relative w-full bg-black rounded-t-xl overflow-hidden" style={{paddingBottom: '56.25%'}}>
-                <iframe
-                  src="https://www.youtube.com/embed/W5KSC-5YPr0"
-                  title="Long Video 1"
-                  className="absolute top-0 left-0 w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-cyan-400' : 'text-gray-900 group-hover:text-yellow-600'
-                }`}>Featured Long Video</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Extended content with in-depth storytelling.</p>
-              </div>
-            </div>
-            
-            <div className={`rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-blue-500 hover:border-blue-400 hover:shadow-blue-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
-            }`}>
-              <div className="relative w-full bg-black rounded-t-xl overflow-hidden" style={{paddingBottom: '56.25%'}}>
-                <iframe
-                  src="https://www.youtube.com/embed/8T3zoVPnNCg"
-                  title="Long Video 2"
-                  className="absolute top-0 left-0 w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-blue-400' : 'text-gray-900 group-hover:text-yellow-600'
-                }`}>Popular Long Form</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Full-length video with amazing content.</p>
-              </div>
-            </div>
-            
-            <div className={`rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-indigo-500 hover:border-indigo-400 hover:shadow-indigo-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
-            }`}>
-              <div className="relative w-full bg-black rounded-t-xl overflow-hidden" style={{paddingBottom: '56.25%'}}>
-                <iframe
-                  src="https://www.youtube.com/embed/t78_PcfnarE"
-                  title="Long Video 3"
-                  className="absolute top-0 left-0 w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-indigo-400' : 'text-gray-900 group-hover:text-yellow-600'
-                }`}>Extended Vlog</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Detailed long-form content for deeper engagement.</p>
               </div>
             </div>
           </div>
