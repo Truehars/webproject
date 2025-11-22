@@ -293,7 +293,7 @@ function App() {
 
             {/* Right Column: YouTube Video */}
             <div className="flex flex-col items-center lg:items-end justify-start order-2">
-              <ShortsEmbed videoId="W5KSC-5YPr0" title="Latest Upload" darkMode={darkMode} />
+              <ShortsEmbed videoId="-4AnfTLFeuw" title="Latest Upload" darkMode={darkMode} />
             </div>
           </div>
         </div>
