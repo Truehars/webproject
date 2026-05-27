@@ -1,24 +1,81 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
-const YouTubeEmbed = ({ videoId, title }) => (
-  <div className="relative w-full h-48 bg-black rounded-lg overflow-hidden">
-    <iframe
-      src={`https://www.youtube.com/embed/${videoId}`}
-      title={title}
-      className="w-full h-full"
-      frameBorder="0"
-      allowFullScreen
-    />
+// ─── YouTube API Config ───────────────────────────────────────────────────────
+// 🔑 Replace with your YouTube Data API v3 key from console.cloud.google.com
+const YT_API_KEY = 'YOUR_YOUTUBE_API_KEY_HERE';
+const CHANNEL_ID = 'UCWJLkpS3FNzUEz2bFVGEj3A';
+
+// ─── Static fallback data ─────────────────────────────────────────────────────
+const STATIC_STATS = { subscribers: '94K', views: '40.7M', videos: '223' };
+const STATIC_SHORTS = [
+  { id: 'qs7tUK14has', title: 'Latest Short' },
+  { id: 'gRcAiXjLsmI', title: 'Short Video #2' },
+  { id: 'zswNZlJHDv0', title: 'Short Video #3' },
+  { id: 'CDgGj5ORYcc', title: 'Short Video #4' },
+  { id: 'EiAUT0W8jjE', title: 'Short Video #5' },
+  { id: 'a2lcvYkKuWU', title: 'Short Video #6' },
+  { id: 'APXk9YdYSAs', title: 'Short Video #7' },
+  { id: 'P1v3FEIotBc', title: 'Short Video #8' },
+  { id: '-QwIR5StZlk', title: 'Short Video #9' },
+  { id: '6UVXY-qA1cM', title: 'Short Video #10' },
+  { id: 'mwH-ogs851E', title: 'Short Video #11' },
+  { id: 'u6jTMncJ4Yg', title: 'Short Video #12' },
+  { id: '8ImkPlFvE7s', title: 'Short Video #13' },
+  { id: '0cA1oLnao7k', title: 'Short Video #14' },
+  { id: 'ry-JZjsuLnM', title: 'Short Video #15' },
+  { id: 'OFCT49ow-ZM', title: 'Short Video #16' },
+  { id: '69R01bQ7mPY', title: 'Short Video #17' },
+  { id: 'lb4S-48d3wc', title: 'Short Video #18' },
+  { id: 'i6WwI-lLsY4', title: 'Short Video #19' },
+  { id: '0qCmL9pbl0E', title: 'Short Video #20' },
+];
+const POPULAR_VIDEOS = [
+  { id: 'sIcWAn3LWks', title: 'Viral Hit – 10M Views 🔥', desc: 'My most popular short that went viral!' },
+  { id: '3fLPpYpy5_c', title: 'Comedy Gold',              desc: 'Fan favourite comedy short.' },
+  { id: 'aSIZ7GAoONs', title: 'Trending Mini Vlog',       desc: 'Top performing vlog.' },
+  { id: 'JjAtAU_ysHQ', title: 'Latest Short',             desc: 'Amazing engagement!' },
+  { id: 'bofK-aJLWyE', title: 'Popular Hit',              desc: 'Trending entertainment content.' },
+  { id: 'eRUCjgkulVw', title: 'Fan Favorite',             desc: 'Highly engaging short.' },
+  { id: 'lb4S-48d3wc', title: 'Comedy Moment',            desc: 'Hilarious vlog moment.' },
+  { id: 'WwFzjFSu8K0', title: 'Entertainment Gold',       desc: 'Amazing viewer response!' },
+];
+const KRISHNA_SERIES = [
+  { id: '1DQpgqYZDlo', title: 'Day 1 – Beginning', desc: 'Starting the Krishna Murti process.' },
+  { id: 'nHKc_9Sk33k', title: 'Day 2 – Progress',  desc: 'Continuing the detailed work.' },
+  { id: 'R4SboHD_VbU', title: 'Day 3 – Details',   desc: 'Adding intricate details.' },
+  { id: 'RWed7aC4COU', title: 'Day 4 – Completion', desc: 'Final touches & completed.' },
+];
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+function fmt(n) {
+  if (n >= 1_000_000) return (n / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+  if (n >= 1_000)     return (n / 1_000).toFixed(1).replace(/\.0$/, '') + 'K';
+  return String(n);
+}
+
+// ─── Sub-components ───────────────────────────────────────────────────────────
+const StatPill = ({ value, label, icon, dark }) => (
+  <div className={`stat-pill flex-1 min-w-[90px] rounded-2xl p-4 text-center border transition-all duration-300 hover:-translate-y-1 ${
+    dark ? 'bg-white/5 border-white/10 hover:border-red-500/40' : 'bg-white border-gray-200 hover:border-red-300 shadow-sm'
+  }`}>
+    <p className={`text-2xl font-black mb-0.5 ${dark ? 'text-white' : 'text-gray-900'}`}>{value}</p>
+    <p className={`text-xs font-semibold tracking-wide uppercase ${dark ? 'text-gray-400' : 'text-gray-500'}`}>{label}</p>
   </div>
 );
 
-const ShortsEmbed = ({ videoId, title, darkMode }) => (
-  <div className="flex flex-col items-center gap-4 w-full">
-    <div className={`w-64 h-[450px] bg-black rounded-xl overflow-hidden shadow-2xl transition-all duration-300 active:scale-95 md:hover:scale-105 hover:shadow-3xl border-4 ${
-      darkMode ? 'border-green-500 hover:shadow-green-500/50' : 'border-yellow-400 hover:shadow-yellow-400/30'
-    }`}>
+const ShortCard = ({ videoId, title, isNew, dark }) => (
+  <div className={`short-card group rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${
+    dark ? 'bg-[#111] border-white/8 hover:border-red-500/50 hover:shadow-red-500/10'
+          : 'bg-white border-gray-200 hover:border-red-300 hover:shadow-red-100'
+  }`}>
+    <div className="relative w-[200px] h-[356px] bg-black overflow-hidden">
+      {isNew && (
+        <span className="absolute top-2 left-2 z-10 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded-full tracking-wider">
+          NEW
+        </span>
+      )}
       <iframe
-        src={`https://www.youtube.com/embed/${videoId}`}
+        src={`https://www.youtube.com/embed/${videoId}?rel=0`}
         title={title}
         className="w-full h-full"
         frameBorder="0"
@@ -27,912 +84,493 @@ const ShortsEmbed = ({ videoId, title, darkMode }) => (
         loading="lazy"
       />
     </div>
-    <p className={`text-gray-400 text-sm font-semibold bg-clip-text text-transparent ${
-      darkMode ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-    }`}>Latest Upload 🎬</p>
+    <div className="px-3 py-2.5">
+      <p className={`text-xs font-semibold truncate ${dark ? 'text-gray-300' : 'text-gray-700'}`}>{title}</p>
+    </div>
   </div>
 );
 
-function App() {
-  const [darkMode, setDarkMode] = useState(true);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+const VideoCard = ({ id, title, desc, dark, accent = 'red' }) => (
+  <div className={`group rounded-2xl overflow-hidden border transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl ${
+    dark
+      ? `bg-[#111] border-white/8 hover:border-${accent}-500/40 hover:shadow-${accent}-500/10`
+      : `bg-white border-gray-200 hover:border-${accent}-300`
+  }`}>
+    <div className="h-72 bg-black overflow-hidden">
+      <iframe
+        src={`https://www.youtube.com/embed/${id}?rel=0`}
+        title={title}
+        className="w-full h-full"
+        frameBorder="0"
+        allowFullScreen
+        loading="lazy"
+      />
+    </div>
+    <div className="p-4">
+      <h3 className={`font-bold text-sm mb-1 transition-colors ${
+        dark ? `text-white group-hover:text-${accent}-400` : 'text-gray-900'
+      }`}>{title}</h3>
+      <p className={`text-xs leading-relaxed ${dark ? 'text-gray-500' : 'text-gray-500'}`}>{desc}</p>
+    </div>
+  </div>
+);
 
+// ─── Main App ─────────────────────────────────────────────────────────────────
+export default function App() {
+  const [dark, setDark]               = useState(true);
+  const [menuOpen, setMenuOpen]       = useState(false);
+  const [scrolled, setScrolled]       = useState(false);
+  const [stats, setStats]             = useState(null);
+  const [latestVideos, setLatest]     = useState([]);
+  const [apiStatus, setApiStatus]     = useState('loading');
+  const [formData, setFormData]       = useState({ name: '', email: '', subject: '', message: '' });
+  const [formStatus, setFormStatus]   = useState('idle');
+
+  // Scroll shadow
+  useEffect(() => {
+    const fn = () => setScrolled(window.scrollY > 20);
+    window.addEventListener('scroll', fn, { passive: true });
+    return () => window.removeEventListener('scroll', fn);
+  }, []);
+
+  // Section reveal
+  useEffect(() => {
+    const io = new IntersectionObserver(
+      (entries) => entries.forEach(e => e.isIntersecting && e.target.classList.add('visible')),
+      { threshold: 0.08 }
+    );
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    return () => io.disconnect();
+  }, []);
+
+  // Live YouTube API
+  useEffect(() => {
+    if (!YT_API_KEY || YT_API_KEY === 'YOUR_YOUTUBE_API_KEY_HERE') {
+      setApiStatus('no-key'); return;
+    }
+    const ctrl = new AbortController();
+    (async () => {
+      try {
+        const [chRes, vidRes] = await Promise.all([
+          fetch(`https://www.googleapis.com/youtube/v3/channels?part=statistics&id=${CHANNEL_ID}&key=${YT_API_KEY}`, { signal: ctrl.signal }),
+          fetch(`https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=${CHANNEL_ID}&maxResults=9&order=date&type=video&key=${YT_API_KEY}`, { signal: ctrl.signal }),
+        ]);
+        const [chJson, vidJson] = await Promise.all([chRes.json(), vidRes.json()]);
+        if (chJson.items?.length) {
+          const s = chJson.items[0].statistics;
+          setStats({ subscribers: fmt(+s.subscriberCount), views: fmt(+s.viewCount), videos: fmt(+s.videoCount) });
+        }
+        if (vidJson.items?.length) {
+          setLatest(vidJson.items.map((item, i) => ({
+            id: item.id.videoId, title: item.snippet.title, isNew: i < 3,
+          })));
+        }
+        setApiStatus('ok');
+      } catch (e) {
+        if (e.name !== 'AbortError') setApiStatus('error');
+      }
+    })();
+    return () => ctrl.abort();
+  }, []);
+
+  const displayStats  = stats || STATIC_STATS;
+  const displayShorts = latestVideos.length
+    ? latestVideos.map((v, i) => ({ ...v, isNew: i < 3 }))
+    : STATIC_SHORTS.map((v, i) => ({ ...v, isNew: i < 3 }));
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setFormStatus('sending');
+    setTimeout(() => { setFormStatus('sent'); setFormData({ name: '', email: '', subject: '', message: '' }); }, 1200);
+  };
+
+  // ─── Render ─────────────────────────────────────────────────────────────────
   return (
-    <div className={`min-h-screen font-inter transition-colors duration-300 ${
-      darkMode 
-        ? 'bg-gradient-to-br from-gray-900 via-green-900/20 to-gray-900 text-white' 
-        : 'bg-gradient-to-br from-yellow-50 via-white to-amber-50 text-gray-900'
-    }`}>
-      {/* Navigation */}
-      <nav className={`fixed top-0 w-full backdrop-blur-md z-50 shadow-lg transition-colors duration-300 ${
-        darkMode 
-          ? 'bg-gray-900/95 border-b border-green-500/50 shadow-green-500/20' 
-          : 'bg-white/90 border-b border-yellow-200'
+    <div className={`min-h-screen transition-colors duration-300 ${dark ? 'bg-[#0a0a0a] text-white' : 'bg-[#f9f8f6] text-gray-900'}`}>
+
+      {/* ── NAV ── */}
+      <nav className={`fixed top-0 inset-x-0 z-50 h-16 flex items-center transition-all duration-300 ${
+        scrolled
+          ? dark ? 'bg-black/90 backdrop-blur-xl border-b border-white/8 shadow-xl shadow-black/60'
+                 : 'bg-white/95 backdrop-blur-xl border-b border-gray-200 shadow-md'
+          : 'bg-transparent'
       }`}>
-        {/* Navigation Bar */}
-        <div className="max-w-6xl mx-auto px-4 flex justify-between items-center h-16">
+        <div className="w-full max-w-7xl mx-auto px-5 flex items-center justify-between">
           {/* Logo */}
-          <div className="flex items-center gap-3">
-            <div className={`w-10 h-10 rounded-lg flex items-center justify-center shadow-lg transition-colors duration-300 ${
-              darkMode 
-                ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500' 
-                : 'bg-gradient-to-r from-yellow-400 to-amber-500'
-            }`}>
-              <i className="fas fa-video text-white text-lg"></i>
+          <a href="#home" className="flex items-center gap-2.5 group">
+            <div className="w-8 h-8 rounded-lg bg-red-600 flex items-center justify-center shadow-lg shadow-red-600/30 group-hover:scale-110 transition-transform">
+              <i className="fab fa-youtube text-white text-sm" />
             </div>
-            <span className={`text-xl font-bold bg-clip-text text-transparent transition-colors duration-300 ${
-              darkMode 
-                ? 'bg-gradient-to-r from-green-400 via-blue-400 to-purple-400' 
-                : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-            }`}>
-              VLG ARPIT
+            <span className={`font-black text-base tracking-tight ${dark ? 'text-white' : 'text-gray-900'}`}>
+              VLG <span className="text-red-500">ARPIT</span>
             </span>
-          </div>
-          
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center gap-6">
-            <a href="#home" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
-              darkMode ? 'text-gray-300 hover:text-green-400' : 'text-gray-700 hover:text-yellow-600'
-            }`}>
-              <i className="fas fa-home text-sm"></i>
-              Home
-              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-gradient-to-r from-green-400 to-blue-500' : 'bg-yellow-500'
-              }`}></span>
+          </a>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex items-center gap-1">
+            {['Home','About','Shorts','Contact'].map(l => (
+              <a key={l} href={`#${l.toLowerCase()}`}
+                className={`nav-link px-3.5 py-2 rounded-lg text-sm font-semibold transition-colors ${
+                  dark ? 'text-gray-400 hover:text-white hover:bg-white/8' : 'text-gray-600 hover:text-gray-900 hover:bg-gray-100'
+                }`}>{l}</a>
+            ))}
+            <a href="https://www.youtube.com/@ARPITVLG-i7p" target="_blank" rel="noopener noreferrer"
+              className="ml-3 flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white text-sm font-bold shadow-lg shadow-red-600/30 transition-all hover:scale-105 active:scale-95">
+              <i className="fab fa-youtube" /> Subscribe
             </a>
-            <a href="#about" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
-              darkMode ? 'text-gray-300 hover:text-blue-400' : 'text-gray-700 hover:text-yellow-600'
-            }`}>
-              <i className="fas fa-user text-sm"></i>
-              About
-              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-gradient-to-r from-blue-400 to-purple-500' : 'bg-yellow-500'
-              }`}></span>
+            <a href="https://instagram.com/arpit_ty01?igsh=MTQ1OHJoM2FxYW1zOA==" target="_blank" rel="noopener noreferrer"
+              className="ml-2 w-9 h-9 rounded-xl flex items-center justify-center bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400 text-white hover:scale-110 transition-all shadow-lg">
+              <i className="fab fa-instagram text-sm" />
             </a>
-            <a href="#shorts" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
-              darkMode ? 'text-gray-300 hover:text-pink-400' : 'text-gray-700 hover:text-yellow-600'
-            }`}>
-              <i className="fas fa-film text-sm"></i>
-              Short Videos
-              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-gradient-to-r from-pink-400 to-rose-500' : 'bg-yellow-500'
-              }`}></span>
+            <a href="https://facebook.com/share/1CZ4q6ryC2" target="_blank" rel="noopener noreferrer"
+              className="ml-2 w-9 h-9 rounded-xl flex items-center justify-center bg-blue-600 hover:bg-blue-700 text-white hover:scale-110 transition-all shadow-lg">
+              <i className="fab fa-facebook-f text-sm" />
             </a>
-            <a href="#contact" className={`font-medium transition-all duration-200 relative group flex items-center gap-2 ${
-              darkMode ? 'text-gray-300 hover:text-purple-400' : 'text-gray-700 hover:text-yellow-600'
-            }`}>
-              <i className="fas fa-envelope text-sm"></i>
-              Contact
-              <span className={`absolute -bottom-1 left-0 w-0 h-0.5 transition-all duration-200 group-hover:w-full ${
-                darkMode ? 'bg-gradient-to-r from-purple-400 to-green-500' : 'bg-yellow-500'
-              }`}></span>
-            </a>
-            
-            {/* Theme Toggle */}
-            <button 
-              onClick={() => setDarkMode(!darkMode)}
-              className={`ml-2 p-2.5 rounded-lg border-2 transition-all duration-200 group hover:scale-110 ${
-                darkMode 
-                  ? 'bg-gray-800 hover:bg-gray-700 border-green-500 hover:border-green-400 hover:shadow-lg hover:shadow-green-500/30' 
-                  : 'bg-yellow-100 hover:bg-yellow-200 border-yellow-400 hover:border-yellow-500 hover:shadow-lg hover:shadow-yellow-400/30'
-              }`}
-            >
-              {darkMode ? (
-                <i className="fas fa-sun text-yellow-400 group-hover:text-yellow-300 transition-colors duration-200"></i>
-              ) : (
-                <i className="fas fa-moon text-gray-600 group-hover:text-gray-800 transition-colors duration-200"></i>
-              )}
+            <button onClick={() => setDark(!dark)}
+              className={`ml-1.5 w-9 h-9 rounded-xl flex items-center justify-center transition-all ${
+                dark ? 'bg-white/8 hover:bg-white/12 text-yellow-400' : 'bg-gray-200 hover:bg-gray-300 text-gray-600'
+              }`}>
+              <i className={`fas ${dark ? 'fa-sun' : 'fa-moon'} text-sm`} />
             </button>
           </div>
-          
-          {/* Mobile Menu Button */}
-          <div className="md:hidden flex items-center gap-4">
-            <button 
-              onClick={() => setDarkMode(!darkMode)}
-              className={`p-2 rounded-lg border transition-all duration-200 ${
-                darkMode 
-                  ? 'bg-gray-800 hover:bg-gray-700 border-gray-600' 
-                  : 'bg-yellow-100 hover:bg-yellow-200 border-yellow-300'
-              }`}
-            >
-              {darkMode ? (
-                <i className="fas fa-sun text-yellow-400"></i>
-              ) : (
-                <i className="fas fa-moon text-gray-600"></i>
-              )}
+
+          {/* Mobile */}
+          <div className="flex md:hidden items-center gap-2">
+            <button onClick={() => setDark(!dark)} className={`w-9 h-9 rounded-xl flex items-center justify-center ${dark ? 'bg-white/8 text-yellow-400' : 'bg-gray-200 text-gray-600'}`}>
+              <i className={`fas ${dark ? 'fa-sun' : 'fa-moon'} text-sm`} />
             </button>
-            <button 
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 rounded-lg border transition-all duration-200 ${
-                darkMode 
-                  ? 'bg-gray-800 hover:bg-gray-700 border-gray-600' 
-                  : 'bg-yellow-100 hover:bg-yellow-200 border-yellow-300'
-              }`}
-            >
-              <i className={`fas ${mobileMenuOpen ? 'fa-times' : 'fa-bars'} ${
-                darkMode ? 'text-gray-300' : 'text-gray-700'
-              }`}></i>
+            <button onClick={() => setMenuOpen(!menuOpen)} className={`w-9 h-9 rounded-xl flex items-center justify-center ${dark ? 'bg-white/8 text-white' : 'bg-gray-200 text-gray-800'}`}>
+              <i className={`fas ${menuOpen ? 'fa-xmark' : 'fa-bars'} text-sm`} />
             </button>
           </div>
         </div>
-        
-        {/* Mobile Menu */}
-        {mobileMenuOpen && (
-          <div className={`md:hidden backdrop-blur-md border-t transition-colors duration-300 ${
-            darkMode 
-              ? 'bg-gray-900/98 border-gray-700' 
-              : 'bg-white/95 border-yellow-200'
-          }`}>
-            <div className="px-4 py-4 space-y-3">
-              <a href="#home" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-green-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
-              }`}>
-                <i className="fas fa-home w-5"></i>
-                Home
+
+        {/* Mobile dropdown */}
+        {menuOpen && (
+          <div className={`absolute top-16 inset-x-0 md:hidden border-b px-4 py-3 space-y-1 ${dark ? 'bg-black/96 border-white/8' : 'bg-white border-gray-200'}`}>
+            {['Home','About','Shorts','Contact'].map(l => (
+              <a key={l} href={`#${l.toLowerCase()}`} onClick={() => setMenuOpen(false)}
+                className={`flex items-center px-3 py-2.5 rounded-xl text-sm font-semibold transition-colors ${dark ? 'text-gray-300 hover:text-white hover:bg-white/8' : 'text-gray-700 hover:bg-gray-100'}`}>
+                {l}
               </a>
-              <a href="#about" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-blue-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
-              }`}>
-                <i className="fas fa-user w-5"></i>
-                About
-              </a>
-              <a href="#shorts" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-pink-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
-              }`}>
-                <i className="fas fa-film w-5"></i>
-                Short Videos
-              </a>
-              <a href="#contact" className={`flex items-center gap-3 font-medium py-2.5 px-3 rounded-lg transition-all duration-200 ${
-                darkMode ? 'text-gray-300 hover:text-purple-400 hover:bg-gray-800' : 'text-gray-700 hover:text-yellow-600 hover:bg-yellow-50'
-              }`}>
-                <i className="fas fa-envelope w-5"></i>
-                Contact
-              </a>
-            </div>
+            ))}
           </div>
         )}
       </nav>
 
-      {/* Banner Section */}
-      <section className={`pt-20 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-900' : 'bg-white'
-      }`}>
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className={`rounded-2xl overflow-hidden border-4 shadow-2xl transition-all duration-300 hover:shadow-3xl ${
-            darkMode 
-              ? 'border-green-500 shadow-green-500/30 hover:border-green-400' 
-              : 'border-yellow-400 shadow-yellow-400/30 hover:border-yellow-500'
-          }`}>
-            <div className="relative h-40 md:h-56 overflow-hidden group">
-              <img
-                src="https://yt3.googleusercontent.com/Juq8ug22QpLlz2-FfYFzVuNsCueD0A_S91L0ASAAo-5zpzOt3f9AxxFiMMko12JTpCaMZ2Mk=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"
-                alt="Channel Banner"
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                loading="eager"
-              />
-              <div className={`absolute inset-0 transition-opacity duration-300 ${
-                darkMode 
-                  ? 'bg-gradient-to-br from-green-500/20 via-transparent to-blue-500/20 opacity-0 group-hover:opacity-100' 
-                  : 'bg-gradient-to-br from-yellow-400/20 via-transparent to-amber-400/20 opacity-0 group-hover:opacity-100'
-              }`}></div>
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
-              <div className="absolute bottom-4 left-4 right-4">
-                <h2 className="text-white text-xl md:text-3xl font-bold drop-shadow-lg">
-                  Welcome to VLG ARPIT Channel 🎬
-                </h2>
-              </div>
-            </div>
-          </div>
+      {/* ── HERO ── */}
+      <section id="home" className="relative min-h-screen flex items-center overflow-hidden pt-16">
+        {/* Ambient blobs */}
+        <div className="pointer-events-none absolute inset-0 overflow-hidden">
+          <div className="blob-1 absolute -top-32 -right-32 w-[500px] h-[500px] rounded-full bg-red-600/10 blur-3xl" />
+          <div className="blob-2 absolute top-1/2 -left-24 w-80 h-80 rounded-full bg-orange-500/8 blur-3xl" />
+          <div className="blob-3 absolute bottom-0 right-1/3 w-64 h-64 rounded-full bg-red-800/8 blur-3xl" />
         </div>
-      </section>
 
-      {/* Hero Section */}
-      <section id="home" className={`pb-16 transition-colors duration-300 ${
-        darkMode 
-          ? 'bg-gradient-to-br from-gray-900 via-green-900/10 to-gray-800' 
-          : 'bg-gradient-to-br from-yellow-50 via-amber-50 to-white'
-      }`}>
-        <div className="max-w-6xl mx-auto px-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
-            {/* Left Column: Profile Image and Text */}
-            <div className="space-y-6 order-1">
-              {/* Profile Image */}
-              <div className="flex justify-center lg:justify-start">
-                <img
-                  src="https://yt3.googleusercontent.com/2_8e2DBpQ9tqbpU9z4w8KegXoBQbsz-sUFoQ-M7f3qVRu2B-u_2YklQGEJRilmZGl_MW1yQ-=s160-c-k-c0x00ffffff-no-rj"
-                  alt="Arpit Profile"
-                  loading="lazy"
-                  className={`w-40 h-40 md:w-48 md:h-48 rounded-full border-4 shadow-2xl transition-all duration-300 active:scale-95 md:hover:scale-105 ${
-                    darkMode 
-                      ? 'border-green-500 hover:shadow-green-500/50 hover:shadow-2xl' 
-                      : 'border-yellow-400 hover:shadow-yellow-400/30'
-                  }`}
-                />
+        {/* Channel banner faint strip */}
+        <div className="absolute top-16 inset-x-0 h-44 overflow-hidden opacity-20 pointer-events-none">
+          <img src="https://yt3.googleusercontent.com/Juq8ug22QpLlz2-FfYFzVuNsCueD0A_S91L0ASAAo-5zpzOt3f9AxxFiMMko12JTpCaMZ2Mk=w1707-fcrop64=1,00005a57ffffa5a8-k-c0xffffffff-no-nd-rj"
+            alt="" className="w-full h-full object-cover" />
+          <div className={`absolute inset-0 ${dark ? 'bg-gradient-to-b from-transparent to-[#0a0a0a]' : 'bg-gradient-to-b from-transparent to-[#f9f8f6]'}`} />
+        </div>
+
+        <div className="hero-content relative max-w-7xl mx-auto px-5 py-24 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center w-full">
+          {/* Left */}
+          <div className="space-y-8">
+            {/* Live indicator */}
+            {apiStatus === 'ok' && (
+              <div className="inline-flex items-center gap-2 bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 text-xs font-bold px-3 py-1.5 rounded-full">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                LIVE DATA
               </div>
+            )}
 
-              {/* Hero Text */}
-              <div className="text-center lg:text-left px-4 md:px-0">
-                <div className={`inline-flex items-center gap-2 text-white px-4 py-2 rounded-full text-sm font-semibold mb-4 ${
-                  darkMode ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-yellow-400 to-amber-500'
-                }`}>
-                  <i className="fab fa-youtube"></i>
-                  YouTube
-                </div>
-                <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                  VLG <span className={darkMode ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500 bg-clip-text text-transparent' : 'text-yellow-500'}>ARPIT</span>
+            <div className="flex items-center gap-5">
+              <div className="avatar-wrap relative flex-shrink-0">
+                <img src="https://yt3.googleusercontent.com/GhOcvGVWm2VzypcTloTHLKYZ9Xj1aWjGixrMl5NpyR_c7qpOKxxwSKyvhrNR7fMjVg-qeX9AtG4=s160-c-k-c0x00ffffff-no-rj"
+                  alt="Arpit" className="w-[72px] h-[72px] rounded-full border-2 border-red-500 relative z-10" />
+              </div>
+              <div>
+                <h1 className={`text-5xl md:text-6xl font-black leading-none tracking-tight ${dark ? 'text-white' : 'text-gray-900'}`}>
+                  VLG <span className="text-red-500">ARPIT</span>
                 </h1>
-                <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center lg:justify-start">
-                  <span className={`inline-flex items-center gap-2 text-white px-4 py-2 rounded-lg font-semibold shadow-lg ${
-                    darkMode ? 'bg-gradient-to-r from-green-600 to-green-500' : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-                  }`}>
-                    <i className="fab fa-youtube"></i>
-                    <span className="font-bold">83K Subscribers</span>
-                  </span>
-                  <span className="text-gray-400 font-medium">@ARPITVLG-i7p</span>
-                </div>
-                <p className={`text-base md:text-lg mb-6 leading-relaxed transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>
-                  Hi, I am Arpit! I create short video vlogs with funny content and entertainment. 
-                  Quick, engaging videos that will make you laugh and brighten your day. Join my 83K+ community! 😁
-                </p>
-                <a
-                  href="https://www.youtube.com/@ARPITVLG-i7p"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-block text-white px-6 md:px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform active:scale-95 md:hover:scale-105 shadow-lg ${
-                    darkMode 
-                      ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-green-500/50' 
-                      : 'bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 hover:shadow-yellow-400/30'
-                  }`}
-                >
-                  YT Link
-                </a>
+                <p className={`text-sm font-medium mt-1 ${dark ? 'text-gray-500' : 'text-gray-500'}`}>@ARPITVLG-i7p</p>
               </div>
             </div>
 
-            {/* Right Column: YouTube Video */}
-            <div className="flex flex-col items-center lg:items-end justify-start order-2">
-              <ShortsEmbed videoId="-4AnfTLFeuw" title="Latest Upload" darkMode={darkMode} />
+            <p className={`text-lg leading-relaxed max-w-md ${dark ? 'text-gray-400' : 'text-gray-600'}`}>
+              Short video vlogs packed with funny content &amp; entertainment — quick, engaging videos that brighten your day. 😁
+            </p>
+
+            {/* Stats */}
+            <div className="flex gap-3">
+              <StatPill value={displayStats.subscribers} label="Subscribers" dark={dark} />
+              <StatPill value={displayStats.views}        label="Total Views"  dark={dark} />
+              <StatPill value={displayStats.videos}       label="Videos"       dark={dark} />
+            </div>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap gap-3">
+              <a href="https://www.youtube.com/@ARPITVLG-i7p" target="_blank" rel="noopener noreferrer"
+                className="cta-primary inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold shadow-xl shadow-red-600/25 transition-all hover:scale-105 active:scale-95">
+                <i className="fab fa-youtube text-lg" /> Subscribe on YouTube
+              </a>
+              <a href="#shorts"
+                className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold border-2 transition-all hover:scale-105 ${
+                  dark ? 'border-white/15 text-white hover:border-red-500 hover:bg-red-500/8' : 'border-gray-300 text-gray-800 hover:border-red-400'
+                }`}>
+                <i className="fas fa-play text-red-500 text-sm" /> Watch Videos
+              </a>
+            </div>
+          </div>
+
+          {/* Right: featured video */}
+          <div className="flex justify-center lg:justify-end">
+            <div className="featured-video relative">
+              <div className="absolute inset-0 rounded-3xl blur-3xl scale-90 bg-red-600/20" />
+              <div className={`relative rounded-3xl overflow-hidden border shadow-2xl ${dark ? 'border-white/10' : 'border-gray-300'}`}
+                style={{ width: 248, height: 440 }}>
+                <iframe src="https://www.youtube.com/embed/qs7tUK14has?rel=0" title="Latest Upload"
+                  className="w-full h-full" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+              </div>
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap px-4 py-1.5 rounded-full text-xs font-bold text-white bg-red-600 shadow-lg">
+                🎬 Latest Upload
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Scroll hint */}
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 animate-bounce">
+          <i className={`fas fa-chevron-down text-xs ${dark ? 'text-gray-600' : 'text-gray-400'}`} />
+        </div>
+      </section>
+
+
+      {/* ── ABOUT ── */}
+      <section id="about" className={`py-28 reveal ${dark ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
+        <div className="max-w-7xl mx-auto px-5">
+          <div className="text-center mb-16">
+            <p className="text-red-500 font-bold text-xs tracking-[0.2em] uppercase mb-3">About Me</p>
+            <h2 className={`text-4xl md:text-5xl font-black ${dark ? 'text-white' : 'text-gray-900'}`}>
+              Who is VLG <span className="text-red-500">Arpit?</span>
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
+            <div className="space-y-5">
+              {[
+                "Welcome! I'm Arpit — I specialize in short video vlogs packed with maximum entertainment in minimum time. My bite-sized content is perfect for quick laughs and instant mood boosters.",
+                "Each short is carefully crafted to deliver comedy, fun moments, and relatable content in under a minute. Snackable videos that fit perfectly into your busy day.",
+                "Join our amazing community and help me reach 100K subscribers! If you enjoy my content, please subscribe and share the smiles! 😁",
+              ].map((t, i) => (
+                <p key={i} className={`text-base leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-600'}`}>{t}</p>
+              ))}
+            </div>
+
+            <div className="space-y-4">
+              {[
+                { icon: 'fa-youtube', title: 'YouTube Creator', sub: '3+ Years Experience', desc: 'Over 3 years creating engaging short-form content — mini vlogs with funny moments that build real community.', color: 'bg-red-600' },
+                { icon: 'fa-cut',     title: 'CapCut Editor',   sub: '3+ Years Experience', desc: 'Expert in CapCut — dynamic transitions, trending effects, and short-form content optimised for every platform.', color: 'bg-orange-500' },
+              ].map(c => (
+                <div key={c.title} className={`p-6 rounded-2xl border transition-all hover:-translate-y-1 hover:shadow-xl ${
+                  dark ? 'bg-white/4 border-white/8 hover:border-red-500/30' : 'bg-gray-50 border-gray-200 hover:border-red-200'
+                }`}>
+                  <div className="flex items-center gap-4 mb-3">
+                    <div className={`w-11 h-11 rounded-xl flex items-center justify-center ${c.color} shadow-lg`}>
+                      <i className={`fas ${c.icon} text-white`} />
+                    </div>
+                    <div>
+                      <h3 className={`font-bold ${dark ? 'text-white' : 'text-gray-900'}`}>{c.title}</h3>
+                      <p className="text-red-500 text-xs font-semibold">{c.sub}</p>
+                    </div>
+                  </div>
+                  <p className={`text-sm leading-relaxed ${dark ? 'text-gray-500' : 'text-gray-600'}`}>{c.desc}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
       </section>
 
-      {/* About Section */}
-      <section id="about" className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gradient-to-br from-gray-800 via-green-900/10 to-gray-800' : 'bg-white'
-      }`}>
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
-            darkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            About <span className={`bg-clip-text text-transparent ${
-              darkMode 
-                ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500' 
-                : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-            }`}>VLG ARPIT</span>
-          </h2>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div className="lg:col-span-2">
-              <div className={`space-y-6 text-lg leading-relaxed transition-colors duration-300 ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
-                <p>
-                  Welcome to my channel! I'm Arpit, and I specialize in creating short video vlogs that pack maximum entertainment in minimum time. My bite-sized content is perfect for quick laughs and instant mood boosters.
-                </p>
-                <p>
-                  Each short vlog is carefully crafted to deliver comedy, fun moments, and relatable content in under a minute. I believe in creating snackable content that fits perfectly into your busy day while bringing smiles and positive vibes.
-                </p>
-                <p>
-                  Join our amazing community and help me reach my dream of 100K subscribers. If you enjoy my content, please subscribe and share the smiles! 😁
-                </p>
-              </div>
-            </div>
-            <div className="space-y-6">
-              <div className={`p-6 rounded-xl shadow-lg text-center border transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                darkMode 
-                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-green-500 hover:border-green-400 hover:shadow-green-500/30' 
-                  : 'bg-gradient-to-br from-yellow-50 to-white border-yellow-200 hover:border-yellow-400'
-              }`}>
-                <h3 className={`text-3xl font-bold mb-2 ${
-                  darkMode ? 'text-green-400' : 'text-yellow-600'
-                }`}>83K</h3>
-                <p className={`font-medium transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Current Subscribers</p>
-              </div>
-              <div className={`p-6 rounded-xl shadow-lg text-center border transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                darkMode 
-                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-blue-500 hover:border-blue-400 hover:shadow-blue-500/30' 
-                  : 'bg-gradient-to-br from-yellow-50 to-white border-yellow-200 hover:border-yellow-400'
-              }`}>
-                <h3 className={`text-3xl font-bold mb-2 ${
-                  darkMode ? 'text-blue-400' : 'text-yellow-600'
-                }`}>15M+</h3>
-                <p className={`font-medium transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Total Views</p>
-              </div>
-              <div className={`p-6 rounded-xl shadow-lg text-center border transition-all duration-300 hover:scale-105 hover:shadow-xl ${
-                darkMode 
-                  ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-purple-500 hover:border-purple-400 hover:shadow-purple-500/30' 
-                  : 'bg-gradient-to-br from-yellow-50 to-white border-yellow-200 hover:border-yellow-400'
-              }`}>
-                <h3 className={`text-3xl font-bold mb-2 ${
-                  darkMode ? 'text-purple-400' : 'text-yellow-600'
-                }`}>150+</h3>
-                <p className={`font-medium transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Short Vlogs</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Experience Section */}
-      <section className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gradient-to-br from-gray-900 via-blue-900/10 to-gray-900' : 'bg-gradient-to-br from-white via-yellow-50 to-white'
-      }`}>
-        <div className="max-w-6xl mx-auto px-4">
-          <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
-            darkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            My <span className={`bg-clip-text text-transparent ${
-              darkMode 
-                ? 'bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500' 
-                : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-            }`}>Experience</span>
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className={`p-8 rounded-xl shadow-xl border transition-all duration-300 hover:scale-105 hover:shadow-2xl group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-green-500 hover:border-green-400 hover:shadow-green-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/50'
-            }`}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg ${
-                  darkMode ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-yellow-400 to-amber-500'
-                }`}>
-                  <i className="fab fa-youtube text-white text-2xl"></i>
-                </div>
-                <div>
-                  <h3 className={`text-2xl font-bold transition-colors duration-300 ${
-                    darkMode ? 'text-white group-hover:text-green-400' : 'text-gray-900 group-hover:text-yellow-600'
-                  }`}>YouTube Creator</h3>
-                  <p className={`font-semibold ${
-                    darkMode ? 'text-green-400' : 'text-yellow-600'
-                  }`}>3+ Years Experience</p>
-                </div>
-              </div>
-              <p className={`text-lg leading-relaxed transition-colors duration-300 ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
-                Over 3 years of creating engaging short video content on YouTube. Specialized in mini vlogs with funny content that connects with audiences and builds community engagement.
+      {/* ── LATEST SHORTS ── */}
+      <section id="shorts" className={`py-28 reveal ${dark ? 'bg-[#0a0a0a]' : 'bg-[#f9f8f6]'}`}>
+        <div className="max-w-7xl mx-auto px-5">
+          <div className="text-center mb-16">
+            <p className="text-red-500 font-bold text-xs tracking-[0.2em] uppercase mb-3">
+              {apiStatus === 'ok' ? '🔴 Live from YouTube' : 'Videos'}
+            </p>
+            <h2 className={`text-4xl md:text-5xl font-black ${dark ? 'text-white' : 'text-gray-900'}`}>
+              Latest <span className="text-red-500">Short Videos</span>
+            </h2>
+            {apiStatus === 'ok' && (
+              <p className={`mt-3 text-sm ${dark ? 'text-gray-500' : 'text-gray-500'}`}>
+                Auto-updates when you upload a new video ✨
               </p>
-            </div>
-            <div className={`p-8 rounded-xl shadow-xl border transition-all duration-300 hover:scale-105 hover:shadow-2xl group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-purple-500 hover:border-purple-400 hover:shadow-purple-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/50'
-            }`}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className={`w-16 h-16 rounded-full flex items-center justify-center shadow-lg ${
-                  darkMode ? 'bg-gradient-to-r from-purple-500 via-pink-500 to-purple-600' : 'bg-gradient-to-r from-amber-400 to-yellow-500'
-                }`}>
-                  <i className="fas fa-cut text-white text-2xl"></i>
-                </div>
-                <div>
-                  <h3 className={`text-2xl font-bold transition-colors duration-300 ${
-                    darkMode ? 'text-white group-hover:text-purple-400' : 'text-gray-900 group-hover:text-yellow-600'
-                  }`}>CapCut Editor</h3>
-                  <p className={`font-semibold ${
-                    darkMode ? 'text-purple-400' : 'text-amber-600'
-                  }`}>3+ Years Experience</p>
-                </div>
-              </div>
-              <p className={`text-lg leading-relaxed transition-colors duration-300 ${
-                darkMode ? 'text-gray-300' : 'text-gray-600'
-              }`}>
-                Expert in CapCut video editing with 3+ years of experience. Skilled in creating dynamic transitions, effects, and engaging short-form content optimized for social media platforms.
-              </p>
-            </div>
+            )}
+          </div>
+
+          <div className="flex flex-wrap gap-5 justify-center">
+            {displayShorts.map(v => (
+              <ShortCard key={v.id} videoId={v.id} title={v.title} isNew={v.isNew} dark={dark} />
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Latest Upload Section */}
-      <section id="shorts" className={`py-20 transition-colors duration-300 ${
-        darkMode ? 'bg-gray-800' : 'bg-yellow-50'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className={`text-5xl font-bold text-center mb-16 transition-colors duration-300 ${
-            darkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            Latest <span className={`bg-clip-text text-transparent ${
-              darkMode 
-                ? 'bg-gradient-to-r from-pink-400 via-purple-500 to-blue-500' 
-                : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-            }`}>Short Videos</span>
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-green-500 hover:border-green-400 hover:shadow-green-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/HcYInG-I80U" title="Latest Short 1" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-green-400' : 'text-gray-900'}`}>🔥 New Short!</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Fresh content just for you!</p>
-                <span className={`inline-block text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg ${
-                  darkMode ? 'bg-gradient-to-r from-green-500 to-emerald-600' : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-                }`}>NEW</span>
-              </div>
-            </div>
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-blue-500 hover:border-blue-400 hover:shadow-blue-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/1EC3na202f8" title="Latest Short 2" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-blue-400' : 'text-gray-900'}`}>🎬 Latest Short</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Amazing new content!</p>
-                <span className="inline-block bg-gradient-to-r from-blue-600 to-blue-500 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
-              </div>
-            </div>
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-purple-500 hover:border-purple-400 hover:shadow-purple-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/naLKXuigZOQ" title="Latest Short 3" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-purple-400' : 'text-gray-900'}`}>🆕 Recent Upload</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Fresh short video!</p>
-                <span className="inline-block bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
-              </div>
-            </div>
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-pink-500 hover:border-pink-400 hover:shadow-pink-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/uZviNoz1V0w" title="Latest Short 4" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-pink-400' : 'text-gray-900'}`}>✨ New Content</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Brand new short video!</p>
-                <span className="inline-block bg-gradient-to-r from-pink-500 to-pink-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
-              </div>
-            </div>
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-cyan-500 hover:border-cyan-400 hover:shadow-cyan-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/xPjd7RUW4BQ" title="Latest Short 5" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-cyan-400' : 'text-gray-900'}`}>🎥 Latest Upload</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Newest short content!</p>
-                <span className="inline-block bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
-              </div>
-            </div>
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-indigo-500 hover:border-indigo-400 hover:shadow-indigo-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/GmbW5t-QJVQ" title="Latest Short 6" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-indigo-400' : 'text-gray-900'}`}>🌟 Fresh Short</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>New engaging content!</p>
-                <span className="inline-block bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
-              </div>
-            </div>
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-teal-500 hover:border-teal-400 hover:shadow-teal-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/FBsBEdBAgBo" title="Latest Short 7" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-teal-400' : 'text-gray-900'}`}>💫 Recent Video</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Latest short upload!</p>
-                <span className="inline-block bg-gradient-to-r from-teal-500 to-teal-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
-              </div>
-            </div>
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-orange-500 hover:border-orange-400 hover:shadow-orange-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/2llPYIEhFbQ" title="Latest Short 8" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-orange-400' : 'text-gray-900'}`}>🎯 New Video</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Fresh short content!</p>
-                <span className="inline-block bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
-              </div>
-            </div>
-            <div className={`rounded-2xl shadow-2xl overflow-hidden border transition-all duration-300 hover:scale-105 group ${
-              darkMode ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-rose-500 hover:border-rose-400 hover:shadow-rose-500/30' : 'bg-white border-yellow-200 hover:border-yellow-400'
-            }`}>
-              <div className="w-72 h-[450px] bg-black overflow-hidden">
-                <iframe src="https://www.youtube.com/embed/s8UDJYJhtUs" title="Latest Short 9" className="w-full h-full" frameBorder="0" allowFullScreen />
-              </div>
-              <div className="p-5">
-                <h3 className={`text-xl font-bold mb-2 transition-colors duration-300 ${darkMode ? 'text-white group-hover:text-rose-400' : 'text-gray-900'}`}>⚡ Latest Short</h3>
-                <p className={`text-sm mb-3 ${darkMode ? 'text-gray-300' : 'text-gray-600'}`}>Newest upload here!</p>
-                <span className="inline-block bg-gradient-to-r from-rose-500 to-rose-600 text-white px-4 py-1.5 rounded-full text-xs font-bold shadow-lg">NEW</span>
-              </div>
-            </div>
+      {/* ── POPULAR VLOGS ── */}
+      <section className={`py-28 reveal ${dark ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
+        <div className="max-w-7xl mx-auto px-5">
+          <div className="text-center mb-16">
+            <p className="text-red-500 font-bold text-xs tracking-[0.2em] uppercase mb-3">Hall of Fame</p>
+            <h2 className={`text-4xl md:text-5xl font-black ${dark ? 'text-white' : 'text-gray-900'}`}>
+              Popular <span className="text-red-500">Short Vlogs</span>
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-5 justify-center">
+            {POPULAR_VIDEOS.map(v => (
+              <ShortCard key={v.id} videoId={v.id} title={v.title} dark={dark} />
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Featured Videos Section */}
-      <section id="videos" className={`py-20 transition-colors duration-300 ${
-        darkMode ? 'bg-gradient-to-br from-gray-900 via-green-900/10 to-gray-900' : 'bg-white'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className={`text-5xl font-bold text-center mb-16 transition-colors duration-300 ${
-            darkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            Popular <span className={`bg-clip-text text-transparent ${
-              darkMode 
-                ? 'bg-gradient-to-r from-green-400 via-cyan-500 to-blue-500' 
-                : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-            }`}>Short Vlogs</span>
-          </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 justify-items-center">
-            <div className={`w-72 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-green-500 hover:border-green-400 hover:shadow-green-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
-            }`}>
-              <div className="w-full h-[450px] bg-black overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/sIcWAn3LWks"
-                  title="Viral Hit - 10M Views"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-green-400' : 'text-gray-900 group-hover:text-yellow-600'
-                }`}>Viral Hit - 10M Views! 🔥</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>My most popular short video that went viral!</p>
-              </div>
-            </div>
-            <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-blue-500 hover:border-blue-400 hover:shadow-blue-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
-            }`}>
-              <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/3fLPpYpy5_c"
-                  title="Comedy Gold - Second Hit"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-blue-400' : 'text-gray-900 group-hover:text-yellow-600'
-                }`}>Comedy Gold - Second Hit</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Fan favorite showcasing my funny content style.</p>
-              </div>
-            </div>
-            <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-purple-500 hover:border-purple-400 hover:shadow-purple-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
-            }`}>
-              <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/aSIZ7GAoONs"
-                  title="Trending Mini Vlog"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-purple-400' : 'text-gray-900 group-hover:text-yellow-600'
-                }`}>Trending Mini Vlog</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Top performing short vlog with great engagement.</p>
-              </div>
-            </div>
-            <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-pink-500 hover:border-pink-400 hover:shadow-pink-500/30' 
-                : 'bg-white border-yellow-200 hover:border-yellow-400 hover:shadow-yellow-200/30'
-            }`}>
-              <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/JjAtAU_ysHQ"
-                  title="Latest Short Video"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-pink-400' : 'text-gray-900 group-hover:text-yellow-600'
-                }`}>Latest Short Video</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>My newest short content with amazing engagement.</p>
-              </div>
-            </div>
+      {/* ── KRISHNA SERIES ── */}
+      <section className={`py-28 reveal ${dark ? 'bg-[#0a0a0a]' : 'bg-[#f9f8f6]'}`}>
+        <div className="max-w-7xl mx-auto px-5">
+          <div className="text-center mb-16">
+            <p className="text-amber-500 font-bold text-xs tracking-[0.2em] uppercase mb-3">4-Day Journey</p>
+            <h2 className={`text-4xl md:text-5xl font-black ${dark ? 'text-white' : 'text-gray-900'}`}>
+              Krishna Murti <span className="text-amber-500">Making Series</span>
+            </h2>
+            <p className={`mt-3 text-sm ${dark ? 'text-gray-500' : 'text-gray-500'}`}>
+              A beautiful 4-day journey of creating a Krishna Murti from scratch
+            </p>
           </div>
-
-        </div>
-      </section>
-
-      {/* Krishna Videos Section */}
-      <section className={`py-20 transition-colors duration-300 ${
-        darkMode ? 'bg-gradient-to-br from-gray-900 via-orange-900/10 to-gray-900' : 'bg-gradient-to-br from-white via-amber-50 to-white'
-      }`}>
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className={`text-5xl font-bold text-center mb-6 transition-colors duration-300 ${
-            darkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            Krishna Murti <span className={`bg-clip-text text-transparent ${
-              darkMode 
-                ? 'bg-gradient-to-r from-orange-400 via-amber-500 to-yellow-400' 
-                : 'bg-gradient-to-r from-amber-500 to-yellow-600'
-            }`}>Making Series</span>
-          </h2>
-          <p className={`text-center mb-12 text-lg transition-colors duration-300 ${
-            darkMode ? 'text-gray-300' : 'text-gray-600'
-          }`}>4-day journey of creating a beautiful Krishna Murti</p>
-          
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 justify-items-center">
-            <div className={`w-72 rounded-2xl shadow-2xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-orange-500 hover:border-orange-400 hover:shadow-orange-500/30' 
-                : 'bg-white border-amber-200 hover:border-amber-400 hover:shadow-amber-200/30'
-            }`}>
-              <div className="w-full h-[450px] bg-black overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/1DQpgqYZDlo"
-                  title="Krishna Murti Day 1"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
+          <div className="flex flex-wrap gap-5 justify-center">
+            {KRISHNA_SERIES.map((v, i) => (
+              <div key={v.id} className="relative">
+                <div className={`absolute top-2 left-2 z-10 w-7 h-7 rounded-full flex items-center justify-center text-white text-xs font-black shadow-lg ${
+                  ['bg-amber-400','bg-amber-500','bg-amber-600','bg-amber-700'][i]
+                }`}>{i + 1}</div>
+                <ShortCard videoId={v.id} title={v.title} dark={dark} />
               </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-orange-400' : 'text-gray-900 group-hover:text-amber-600'
-                }`}>Day 1 - Beginning</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Starting the Krishna Murti creation process.</p>
-              </div>
-            </div>
-            
-            <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-orange-500/50' 
-                : 'bg-white border-amber-200 hover:border-amber-400 hover:shadow-amber-200/30'
-            }`}>
-              <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/nHKc_9Sk33k"
-                  title="Krishna Murti Day 2"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-orange-400' : 'text-gray-900 group-hover:text-amber-600'
-                }`}>Day 2 - Progress</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Continuing the detailed work on Krishna.</p>
-              </div>
-            </div>
-            
-            <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-orange-500/50' 
-                : 'bg-white border-amber-200 hover:border-amber-400 hover:shadow-amber-200/30'
-            }`}>
-              <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/R4SboHD_VbU"
-                  title="Krishna Murti Day 3"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-orange-400' : 'text-gray-900 group-hover:text-amber-600'
-                }`}>Day 3 - Details</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Adding intricate details and features.</p>
-              </div>
-            </div>
-            
-            <div className={`w-64 rounded-xl shadow-xl overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-2xl border group ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-800 to-gray-900 border-gray-700 hover:border-orange-500/50' 
-                : 'bg-white border-amber-200 hover:border-amber-400 hover:shadow-amber-200/30'
-            }`}>
-              <div className="w-full h-96 bg-black rounded-t-xl overflow-hidden">
-                <iframe
-                  src="https://www.youtube.com/embed/RWed7aC4COU"
-                  title="Krishna Murti Day 4"
-                  className="w-full h-full"
-                  frameBorder="0"
-                  allowFullScreen
-                />
-              </div>
-              <div className="p-4">
-                <h3 className={`text-lg font-semibold mb-2 transition-colors duration-300 ${
-                  darkMode ? 'text-white group-hover:text-orange-400' : 'text-gray-900 group-hover:text-amber-600'
-                }`}>Day 4 - Completion</h3>
-                <p className={`text-sm transition-colors duration-300 ${
-                  darkMode ? 'text-gray-300' : 'text-gray-600'
-                }`}>Final touches and completed Krishna Murti.</p>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* Contact Section */}
-      <section id="contact" className={`py-16 transition-colors duration-300 ${
-        darkMode ? 'bg-gradient-to-br from-gray-900 via-purple-900/10 to-gray-900' : 'bg-white'
-      }`}>
-        <div className="max-w-4xl mx-auto px-4">
-          <h2 className={`text-4xl font-bold text-center mb-12 transition-colors duration-300 ${
-            darkMode ? 'text-white' : 'text-gray-900'
-          }`}>
-            Let's <span className={`bg-clip-text text-transparent ${
-              darkMode 
-                ? 'bg-gradient-to-r from-green-400 via-blue-500 to-purple-500' 
-                : 'bg-gradient-to-r from-yellow-500 to-amber-600'
-            }`}>Connect</span>
-          </h2>
+      {/* ── CONTACT ── */}
+      <section id="contact" className={`py-28 reveal ${dark ? 'bg-[#0d0d0d]' : 'bg-white'}`}>
+        <div className="max-w-5xl mx-auto px-5">
+          <div className="text-center mb-16">
+            <p className="text-red-500 font-bold text-xs tracking-[0.2em] uppercase mb-3">Get In Touch</p>
+            <h2 className={`text-4xl md:text-5xl font-black ${dark ? 'text-white' : 'text-gray-900'}`}>
+              Let's <span className="text-red-500">Connect</span>
+            </h2>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            <div>
-              <h3 className="text-xl font-semibold mb-4">Business Inquiry</h3>
-              <p className="text-gray-300 mb-6">
-                For business inquiries, collaborations, or sponsorships, feel free to contact me. Let's create something amazing together!
+            {/* Info */}
+            <div className="space-y-6">
+              <p className={`text-base leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-600'}`}>
+                For collaborations, sponsorships, or general inquiries — feel free to reach out. Let's create something amazing together!
               </p>
-              <div className="flex items-center gap-3 mb-6">
-                <i className="fas fa-envelope text-indigo-600"></i>
-                <a href="mailto:arpit40357@gmail.com" className="text-gray-300 hover:text-red-500">
-                  arpit40357@gmail.com
-                </a>
-              </div>
-              <div className="flex gap-4 mb-6">
-                <a href="https://www.youtube.com/@ARPITVLG-i7p" target="_blank" rel="noopener noreferrer" 
-                   className="w-12 h-12 bg-red-600 text-white rounded-full flex items-center justify-center hover:bg-red-700 transition-colors">
-                  <i className="fab fa-youtube"></i>
-                </a>
-                <a href="#" className="w-12 h-12 bg-pink-600 text-white rounded-full flex items-center justify-center hover:bg-pink-700 transition-colors">
-                  <i className="fab fa-instagram"></i>
-                </a>
-                <a href="#" className="w-12 h-12 bg-blue-500 text-white rounded-full flex items-center justify-center hover:bg-blue-600 transition-colors">
-                  <i className="fab fa-twitter"></i>
-                </a>
-              </div>
-              <div className="text-center">
-                <a
-                  href="https://www.youtube.com/@ARPITVLG-i7p"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`inline-flex items-center gap-3 text-white px-8 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                    darkMode 
-                      ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-green-500/50' 
-                      : 'bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 hover:shadow-yellow-400/30'
-                  }`}
-                >
-                  <i className="fab fa-youtube text-xl"></i>
-                  Visit My Channel
-                </a>
+              <a href="mailto:gamingwithyou878@gmail.com"
+                className={`flex items-center gap-3 p-4 rounded-2xl border transition-all hover:-translate-y-0.5 ${
+                  dark ? 'bg-white/4 border-white/8 hover:border-red-500/30' : 'bg-gray-50 border-gray-200 hover:border-red-200'
+                }`}>
+                <div className="w-10 h-10 rounded-xl bg-red-600 flex items-center justify-center flex-shrink-0">
+                  <i className="fas fa-envelope text-white text-sm" />
+                </div>
+                <div>
+                  <p className={`text-xs font-medium ${dark ? 'text-gray-500' : 'text-gray-400'}`}>Email</p>
+                  <p className={`font-semibold text-sm ${dark ? 'text-white' : 'text-gray-900'}`}>gamingwithyou878@gmail.com</p>
+                </div>
+              </a>
+              <div className="flex gap-3">
+                {[
+                  { href: 'https://www.youtube.com/@ARPITVLG-i7p', icon: 'fa-youtube', cls: 'bg-red-600 hover:bg-red-700 shadow-red-600/25' },
+                  { href: 'https://instagram.com/arpit_ty01?igsh=MTQ1OHJoM2FxYW1zOA==', icon: 'fa-instagram', cls: 'bg-gradient-to-br from-purple-500 via-pink-500 to-orange-400' },
+                  { href: 'https://facebook.com/share/1CZ4q6ryC2', icon: 'fa-facebook', cls: 'bg-blue-600 hover:bg-blue-700' },
+                  { href: '#', icon: 'fa-x-twitter', cls: `${dark ? 'bg-white/10 border border-white/15 hover:bg-white/15' : 'bg-gray-900 hover:bg-black'}` },
+                ].map(s => (
+                  <a key={s.icon} href={s.href} target={s.href !== '#' ? '_blank' : undefined} rel="noopener noreferrer"
+                    className={`w-11 h-11 rounded-xl flex items-center justify-center text-white transition-all hover:scale-110 shadow-lg ${s.cls}`}>
+                    <i className={`fab ${s.icon} text-sm`} />
+                  </a>
+                ))}
               </div>
             </div>
-            <form className={`p-8 rounded-xl shadow-xl border transition-all duration-300 ${
-              darkMode 
-                ? 'bg-gradient-to-br from-gray-700 to-gray-800 border-gray-600' 
-                : 'bg-gradient-to-br from-yellow-50 to-white border-yellow-200'
-            }`}>
-              <div className="mb-6">
-                <input
-                  type="text"
-                  placeholder="Your Name"
-                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 ${
-                    darkMode 
-                      ? 'border-gray-500 bg-gray-800 text-white focus:bg-gray-700' 
-                      : 'border-gray-300 bg-white text-gray-900 focus:bg-gray-50'
-                  }`}
-                  required
-                />
-              </div>
-              <div className="mb-6">
-                <input
-                  type="email"
-                  placeholder="Your Email"
-                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 ${
-                    darkMode 
-                      ? 'border-gray-500 bg-gray-800 text-white focus:bg-gray-700' 
-                      : 'border-gray-300 bg-white text-gray-900 focus:bg-gray-50'
-                  }`}
-                  required
-                />
-              </div>
-              <div className="mb-6">
-                <select className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 ${
-                  darkMode 
-                    ? 'border-gray-500 bg-gray-800 text-white focus:bg-gray-700' 
-                    : 'border-gray-300 bg-white text-gray-900 focus:bg-gray-50'
-                }`} required>
-                  <option value="">Select Subject</option>
-                  <option value="collaboration">Collaboration</option>
-                  <option value="sponsorship">Sponsorship</option>
-                  <option value="general">General Inquiry</option>
-                </select>
-              </div>
-              <div className="mb-6">
-                <textarea
-                  placeholder="Your Message"
-                  rows="4"
-                  className={`w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 ${
-                    darkMode 
-                      ? 'border-gray-500 bg-gray-800 text-white focus:bg-gray-700' 
-                      : 'border-gray-300 bg-white text-gray-900 focus:bg-gray-50'
-                  }`}
-                  required
-                ></textarea>
-              </div>
-              <button
-                type="submit"
-                className={`w-full text-white py-4 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg ${
-                  darkMode 
-                    ? 'bg-gradient-to-r from-green-500 via-emerald-500 to-green-600 hover:from-green-600 hover:to-emerald-700 hover:shadow-green-500/50' 
-                    : 'bg-gradient-to-r from-yellow-400 to-amber-500 hover:from-yellow-500 hover:to-amber-600 hover:shadow-yellow-400/30'
-                }`}
-              >
-                Send Message
-              </button>
-            </form>
+
+            {/* Form */}
+            <div className={`p-7 rounded-2xl border ${dark ? 'bg-white/4 border-white/8' : 'bg-gray-50 border-gray-200'}`}>
+              {formStatus === 'sent' ? (
+                <div className="h-full flex flex-col items-center justify-center text-center gap-4 py-8">
+                  <div className="w-14 h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
+                    <i className="fas fa-check text-emerald-400 text-xl" />
+                  </div>
+                  <p className={`font-bold text-lg ${dark ? 'text-white' : 'text-gray-900'}`}>Message Sent!</p>
+                  <p className={`text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Thanks for reaching out, I'll get back to you soon.</p>
+                  <button onClick={() => setFormStatus('idle')} className="text-red-500 text-sm font-semibold hover:underline">Send another</button>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {[
+                    { key: 'name',    type: 'text',  placeholder: 'Your Name' },
+                    { key: 'email',   type: 'email', placeholder: 'Your Email' },
+                  ].map(f => (
+                    <input key={f.key} type={f.type} placeholder={f.placeholder} required value={formData[f.key]}
+                      onChange={e => setFormData(p => ({ ...p, [f.key]: e.target.value }))}
+                      className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                        dark ? 'bg-white/6 border-white/10 text-white placeholder-gray-600' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                      }`} />
+                  ))}
+                  <select required value={formData.subject} onChange={e => setFormData(p => ({ ...p, subject: e.target.value }))}
+                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-500 ${
+                      dark ? 'bg-white/6 border-white/10 text-white' : 'bg-white border-gray-300 text-gray-900'
+                    }`}>
+                    <option value="">Select Subject</option>
+                    <option>Collaboration</option>
+                    <option>Sponsorship</option>
+                    <option>General Inquiry</option>
+                  </select>
+                  <textarea rows={4} placeholder="Your Message" required value={formData.message}
+                    onChange={e => setFormData(p => ({ ...p, message: e.target.value }))}
+                    className={`w-full px-4 py-3 rounded-xl border text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-500 resize-none ${
+                      dark ? 'bg-white/6 border-white/10 text-white placeholder-gray-600' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
+                    }`} />
+                  <button type="submit" disabled={formStatus === 'sending'}
+                    className="w-full py-3.5 rounded-xl font-bold text-white text-sm bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
+                    {formStatus === 'sending' ? (
+                      <span className="flex items-center justify-center gap-2">
+                        <i className="fas fa-circle-notch fa-spin" /> Sending…
+                      </span>
+                    ) : 'Send Message'}
+                  </button>
+                </form>
+              )}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className={`py-8 transition-colors duration-300 ${
-        darkMode ? 'bg-gradient-to-r from-green-600 via-emerald-600 to-green-600 text-white' : 'bg-gradient-to-r from-yellow-400 to-amber-500 text-white'
-      }`}>
-        <div className="max-w-6xl mx-auto px-4 text-center">
-          <p>&copy; 2024 VLG ARPIT. All rights reserved.</p>
+      {/* ── FOOTER ── */}
+      <footer className={`py-8 border-t ${dark ? 'bg-black border-white/6' : 'bg-gray-900 border-gray-800'}`}>
+        <div className="max-w-7xl mx-auto px-5 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-lg bg-red-600 flex items-center justify-center">
+              <i className="fab fa-youtube text-white text-xs" />
+            </div>
+            <span className="text-white font-black text-sm">VLG ARPIT</span>
+          </div>
+          <p className="text-gray-600 text-sm">&copy; {new Date().getFullYear()} VLG ARPIT. All rights reserved.</p>
+          <a href="https://www.youtube.com/@ARPITVLG-i7p" target="_blank" rel="noopener noreferrer"
+            className="text-red-500 hover:text-red-400 text-sm font-semibold transition-colors">
+            Subscribe →
+          </a>
         </div>
       </footer>
     </div>
   );
 }
-
-export default App;
