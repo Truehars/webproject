@@ -48,3 +48,28 @@ iframe {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* Mobile-first responsive adjustments */
+@media (max-width: 640px) {
+  body {
+    font-size: 16px;
+  }
+
+  /* Ensure proper spacing on small screens */
+  section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
+  /* Improve touch interactions */
+  input, textarea, select {
+    font-size: 16px;
+  }
+}
+
+/* Ensure proper viewport setup */
+@supports (height: 100dvh) {
+  html {
+    height: 100dvh;
+  }
+}
