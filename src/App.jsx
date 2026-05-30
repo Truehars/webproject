@@ -123,8 +123,6 @@ export default function App() {
   const [stats, setStats]             = useState(null);
   const [latestVideos, setLatest]     = useState([]);
   const [apiStatus, setApiStatus]     = useState('loading');
-  const [formData, setFormData]       = useState({ name: '', email: '', subject: '', message: '' });
-  const [formStatus, setFormStatus]   = useState('idle');
 
   // Scroll shadow
   useEffect(() => {
@@ -178,11 +176,6 @@ export default function App() {
     ? latestVideos.map((v, i) => ({ ...v, isNew: i < 3 }))
     : STATIC_SHORTS.map((v, i) => ({ ...v, isNew: i < 3 }));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setFormStatus('sending');
-    setTimeout(() => { setFormStatus('sent'); setFormData({ name: '', email: '', subject: '', message: '' }); }, 1200);
-  };
 
   // ─── Render ─────────────────────────────────────────────────────────────────
   return (
@@ -501,55 +494,6 @@ export default function App() {
                   </a>
                 ))}
               </div>
-            </div>
-
-            {/* Form */}
-            <div className={`p-5 sm:p-6 md:p-7 rounded-2xl border ${dark ? 'bg-white/4 border-white/8' : 'bg-gray-50 border-gray-200'}`}>
-              {formStatus === 'sent' ? (
-                <div className="h-full flex flex-col items-center justify-center text-center gap-3 sm:gap-4 py-6 sm:py-8">
-                  <div className="w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center">
-                    <i className="fas fa-check text-emerald-400 text-lg sm:text-xl" />
-                  </div>
-                  <p className={`font-bold text-base sm:text-lg ${dark ? 'text-white' : 'text-gray-900'}`}>Message Sent!</p>
-                  <p className={`text-xs sm:text-sm ${dark ? 'text-gray-400' : 'text-gray-500'}`}>Thanks for reaching out, I'll get back to you soon.</p>
-                  <button onClick={() => setFormStatus('idle')} className="text-red-500 text-xs sm:text-sm font-semibold hover:underline">Send another</button>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
-                  {[
-                    { key: 'name',    type: 'text',  placeholder: 'Your Name' },
-                    { key: 'email',   type: 'email', placeholder: 'Your Email' },
-                  ].map(f => (
-                    <input key={f.key} type={f.type} placeholder={f.placeholder} required value={formData[f.key]}
-                      onChange={e => setFormData(p => ({ ...p, [f.key]: e.target.value }))}
-                      className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                        dark ? 'bg-white/6 border-white/10 text-white placeholder-gray-600' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
-                      }`} />
-                  ))}
-                  <select required value={formData.subject} onChange={e => setFormData(p => ({ ...p, subject: e.target.value }))}
-                    className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-500 ${
-                      dark ? 'bg-white/6 border-white/10 text-white' : 'bg-white border-gray-300 text-gray-900'
-                    }`}>
-                    <option value="">Select Subject</option>
-                    <option>Collaboration</option>
-                    <option>Sponsorship</option>
-                    <option>General Inquiry</option>
-                  </select>
-                  <textarea rows={4} placeholder="Your Message" required value={formData.message}
-                    onChange={e => setFormData(p => ({ ...p, message: e.target.value }))}
-                    className={`w-full px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl border text-xs sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-500 resize-none ${
-                      dark ? 'bg-white/6 border-white/10 text-white placeholder-gray-600' : 'bg-white border-gray-300 text-gray-900 placeholder-gray-400'
-                    }`} />
-                  <button type="submit" disabled={formStatus === 'sending'}
-                    className="w-full py-2.5 sm:py-3.5 rounded-xl font-bold text-white text-xs sm:text-sm bg-red-600 hover:bg-red-700 shadow-lg shadow-red-600/20 transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-60 disabled:cursor-not-allowed">
-                    {formStatus === 'sending' ? (
-                      <span className="flex items-center justify-center gap-2">
-                        <i className="fas fa-circle-notch fa-spin" /> Sending…
-                      </span>
-                    ) : 'Send Message'}
-                  </button>
-                </form>
-              )}
             </div>
           </div>
         </div>
