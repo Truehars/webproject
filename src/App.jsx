@@ -476,7 +476,7 @@ export default function App() {
               <p className={`text-sm sm:text-base leading-relaxed ${dark ? 'text-gray-400' : 'text-gray-600'}`}>
                 For collaborations, sponsorships, or general inquiries — feel free to reach out. Let's create something amazing together!
               </p>
-              <a href="mailto:gamingwithyou878@gmail.com"
+              <a href="mailto:arpit40357@gmail.com"
                 className={`flex items-center gap-3 p-3 sm:p-4 rounded-2xl border transition-all hover:-translate-y-0.5 ${
                   dark ? 'bg-white/4 border-white/8 hover:border-red-500/30' : 'bg-gray-50 border-gray-200 hover:border-red-200'
                 }`}>
@@ -485,7 +485,7 @@ export default function App() {
                 </div>
                 <div>
                   <p className={`text-[10px] sm:text-xs font-medium ${dark ? 'text-gray-500' : 'text-gray-400'}`}>Email</p>
-                  <p className={`font-semibold text-xs sm:text-sm ${dark ? 'text-white' : 'text-gray-900'}`}>gamingwithyou878@gmail.com</p>
+                  <p className={`font-semibold text-xs sm:text-sm ${dark ? 'text-white' : 'text-gray-900'}`}>arpit40357@gmail.com</p>
                 </div>
               </a>
               <div className="flex gap-3">
